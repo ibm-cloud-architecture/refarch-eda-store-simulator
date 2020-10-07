@@ -1,5 +1,6 @@
 package ibm.gse.eda.stores.infrastructure;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -34,5 +35,9 @@ public class StoreRepository {
     public String[] getStoreNames(){
         Set<String> keys = stores.keySet();
         return keys.toArray(new String[keys.size()]);
+    }
+
+    public Collection<String> getStoreNameList(){
+        return stores.keySet();
     }
 }

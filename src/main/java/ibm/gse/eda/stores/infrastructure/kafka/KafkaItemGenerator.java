@@ -7,14 +7,9 @@ import java.util.logging.Logger;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.eclipse.microprofile.reactive.messaging.Channel;
-import org.eclipse.microprofile.reactive.messaging.Emitter;
-import org.eclipse.microprofile.reactive.messaging.Message;
-
 import ibm.gse.eda.stores.domain.Item;
 import ibm.gse.eda.stores.infrastructure.StoreRepository;
 import io.smallrye.mutiny.Multi;
-import io.smallrye.reactive.messaging.kafka.KafkaRecord;
 
 /**
  * Simulate item sale activities between multiple store
@@ -24,11 +19,7 @@ public class KafkaItemGenerator {
     Logger logger = Logger.getLogger(KafkaItemGenerator.class.getName());
 
     String[] stores = null;
-    
-    @Inject
-    @Channel("items")
-    Emitter<Item> emitter;
-
+  
     @Inject
     StoreRepository storeRepository;
 
@@ -44,12 +35,14 @@ public class KafkaItemGenerator {
         return items;
     }
 
-    public void sendItems(Integer numberOfRecords) {
-        Multi.createFrom().items(buildItems(numberOfRecords).stream()).subscribe().with(item -> {
+    public List<Item> start(Integer numberOfRecords) {
+        List<Item> items = buildItems(numberOfRecords);
+        Multi.createFrom().items(items.stream()).subscribe().with(item -> {
             logger.warning("send " + item.toString());
-            Message<Item> record = KafkaRecord.of(item.storeName,item);
-            emitter.send(record );
+           // Message<Item> record = KafkaRecord.of(item.storeName,item);
+           // emitter.send(record );
         }, failure -> System.out.println("Failed with " + failure.getMessage()));
+        return items;
     }
 
 

@@ -16,8 +16,12 @@
       </template>
     </v-data-table>
     </v-col>
+    <v-container>
+       <p>We have the above stores available for the simulation, with items ready to be sold or to re-stock</p>
+
+    </v-container>
   </v-row>
-</template>
+ </template>
 
 <script>
 import axios from "axios";
