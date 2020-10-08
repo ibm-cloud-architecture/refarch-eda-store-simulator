@@ -35,20 +35,11 @@ services:
         - .:/home          
       depends_on:
       - zookeeper
-  maven:
-    image: maven
-    volumes:
-      - "../../:/app"
-      - "~/.m2:/root/.m2"
+  simulator:
+    image: ibmcase/eda-store-simulator
     depends_on:
       - kafka
     hostname: storeapp
-    environment:
-      - AMQP_HOST=rabbitmq
-      - QUARKUS_PROFILE=dev
     ports:
       - "8080:8080"
-      - "5005:5005"
-    working_dir: /app
-    command: "./mvnw quarkus:dev"
       

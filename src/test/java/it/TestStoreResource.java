@@ -34,7 +34,12 @@ public class TestStoreResource {
      * The following code need rabbitmq running with docker compose.
      */
     @Test
-    public void shouldStartSendingOneMessage(){
-        given().when().post("/start/rmq/1").then().statusCode(201);
+    public void shouldStartSendingOneMessageToRabbitMQ(){
+        given().when().post("/start/rmq/1").then().statusCode(200);
+    }
+
+    @Test
+    public void shouldStartSendingOneMessageToKafka(){
+        given().when().post("/start/kafka/1").then().statusCode(200);
     }
 }

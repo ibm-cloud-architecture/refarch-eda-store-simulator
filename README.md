@@ -1,4 +1,4 @@
-# Store sale producer simulator
+# Store sale event producer simulator
 
 This component is a simulator application to demonstrate the end to end item inventory solution. 
 It supports the following capabilities:
@@ -17,7 +17,7 @@ This section is used when developing the application. For pure demonstration of 
 
 As the simulator can use different backend for the messaging we have set up 3 potential environments: kafka with local strimzi, rabbitmq and IBM mq.
 
-For each environment the call to quarkus:dev is done inside of a `maven` container so that the Auarkus application can access the target messaging product on the same docker network.
+For each environment the call to `quarkus:dev` is done inside of a `maven` container so that the Quarkus application can access the target messaging product on the same docker network.
 
 ### RabbitMQ running the application in dev mode
 
@@ -51,8 +51,26 @@ Any development under the webapp will be automatically visible in the browser an
 ### Packaging the UI and Quarkus app
 
 ```shell
-
+# under webapp
+yarn build
+# under root folder
+mvn package -DskipTests
+docker build -f src/main/docker/Dockerfile.jvm -t ibmcase/eda-store-simulator .
 ```
+
+To run one of the configuration with the image built:
+
+```shell
+# For rabbitmq only: under 
+cd environment/rabbitmq
+docker-compose up&
+# for Kafka 
+cd environment/kafka
+docker-compose up&
+```
+
+Access the User interface at [http://localhost:8080/](http://localhost:8080/).
+
 
 ## Implementation approach
 

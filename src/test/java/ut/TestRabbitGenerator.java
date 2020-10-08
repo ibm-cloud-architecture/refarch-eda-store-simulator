@@ -16,6 +16,7 @@ public class TestRabbitGenerator {
 
     @Test
     public void shouldHaveLoadedProperties(){
+        generator.buildItems(1);
         Assertions.assertNotNull(generator.hostname);   
         Assertions.assertNotNull(generator.port);   
         Assertions.assertNotNull(generator.queueName); 

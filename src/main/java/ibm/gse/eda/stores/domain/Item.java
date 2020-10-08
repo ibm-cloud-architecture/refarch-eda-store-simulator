@@ -53,8 +53,9 @@ public class Item {
                 return jsonb.toJson(this);
         }
 
-        public static Item buildRandomItem(String[] stores) {
+        public static Item buildRandomItem(int i,String[] stores) {
                 Item item = new Item();
+                item.id= i;
                 item.storeName = stores[random.nextInt(stores.length)];
                 item.quantity = random.nextInt(maxQuantity);
                 item.sku = skus[random.nextInt(skus.length)];
@@ -62,6 +63,7 @@ public class Item {
                 BigDecimal bd = BigDecimal.valueOf(random.nextDouble() * maxPrice);
                 bd = bd.setScale(2, RoundingMode.HALF_UP);
                 item.price = bd.doubleValue();
+                item.timestamp = LocalDateTime.now().toString();
                 return item;
         }
 }

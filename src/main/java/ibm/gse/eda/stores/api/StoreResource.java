@@ -86,6 +86,7 @@ public class StoreResource {
     }
 
     @POST
+    @Produces("application/json")
     @Path("/start/kafka/{records}")
     public  Multi<Item>  startSendingMessageToKafka(@PathParam final int records){
         return Multi.createFrom().items(kafkaGenerator.start(records).stream());

@@ -33,12 +33,19 @@
                 </v-btn>
             </v-col>
         </v-row>
+        <v-row v-if="messages.length > 0">
+            <Messages :data="messages"></Messages>
+        </v-row>
     </v-card>
 </template>
 <script>
 import axios from 'axios'
+import Messages from './Message.vue'
 
 export default {
+    components: {
+       Messages
+    },
   data: () => ({
      backend: '', 
      records: 1,

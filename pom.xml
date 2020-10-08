@@ -2,9 +2,9 @@
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>ibn.gse.eda</groupId>
-  <artifactId>store-sale-producer</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <groupId>ibm.gse.eda</groupId>
+  <artifactId>store-simulator</artifactId>
+  <version>1.0.0</version>
   <properties>
     <compiler-plugin.version>3.8.1</compiler-plugin.version>
     <maven.compiler.parameters>true</maven.compiler.parameters>
@@ -19,7 +19,6 @@
     <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
     <version.frontend-maven-plugin>1.10.0</version.frontend-maven-plugin>
     <version.resources-plugin>3.2.0</version.resources-plugin>
- 
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -66,20 +65,20 @@
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-resteasy-mutiny</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-kubernetes-config</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
       <artifactId>quarkus-openshift</artifactId>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-resteasy-mutiny</artifactId>
-  </dependency>
-  <dependency>
-    <groupId>io.quarkus</groupId>
-    <artifactId>quarkus-kubernetes-config</artifactId>
-  </dependency>
-  <dependency>
-    <groupId>io.quarkus</groupId>
-    <artifactId>quarkus-openshift</artifactId>
-  </dependency>
+      <artifactId>quarkus-kafka-client</artifactId>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
