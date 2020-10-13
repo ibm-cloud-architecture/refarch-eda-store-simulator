@@ -11,7 +11,7 @@
           width="40"
         />
       </div>
-      <v-toolbar-title>EDA- Item Store Simulator</v-toolbar-title>
+      <v-toolbar-title>EDA- Item Store Simulator - v 0.1.0 </v-toolbar-title>
 
       <v-spacer></v-spacer>
       <v-btn to="/" text>

@@ -1,0 +1,44 @@
+version: '3.7'
+services:
+  ibmmq:
+    image: ibmcom/mq
+    ports:
+        - '1414:1414'
+        - '9443:9443'
+        - '9157:9157'
+    volumes:
+        - qm1data:/mnt/mqm
+    stdin_open: true
+    tty: true
+    restart: always
+    environment:
+        LICENSE: accept
+        MQ_QMGR_NAME: QM1
+        MQ_APP_PASSWORD: passw0rd
+        MQ_ENABLE_METRICS: "true"
+    networks:
+      - kafka-network
+  maven:
+    image: maven
+    volumes:
+      - "../../:/app"
+      - "~/.m2:/root/.m2"
+    depends_on:
+      - ibmmq
+    hostname: storeapp
+    environment:
+      APP_TARGET_MESSAGING: IBMMQ
+      MQ_HOST: ibmmq
+      QUARKUS_PROFILE: dev
+    ports:
+      - "8080:8080"
+      - "5005:5005"
+    working_dir: /app
+    command: "./mvnw quarkus:dev"
+    networks:
+      - kafka-network
+volumes:
+  qm1data:
+networks:
+  kafka-network:
+    name: kafkanet

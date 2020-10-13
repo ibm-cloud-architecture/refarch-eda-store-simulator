@@ -1,13 +1,13 @@
 <template>
   <div class="home">
-    <h3>Welcome to the inventory main page demonstration</h3>
+    <h3>Welcome to the store simulator</h3>
 
    <v-card>
     <h4>Demonstration script</h4>
     <v-container>
     <ul>
       <li>Go to the stores view to see the existing stores we want to get the inventory from</li>
-      <li>The simulator service, deployed, may have a unique messaging backend it can connect to. Go to the simulator page to see which one is available and send message to it</li>
+      <li>In the simulator panel you can start to send message to a specific middleware you select. The list of middleware depends of configuration and deployment. At most you can hava Kafka, IBM MQ or Rabbit MQ.</li>
     </ul>
     </v-container>
    </v-card>

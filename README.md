@@ -1,23 +1,120 @@
 # Store sale event producer simulator
 
-This component is a simulator application to demonstrate the end to end item inventory solution. 
-It supports the following capabilities:
+The store sales simulator application aims to demonstrate the end to end for Kafka based item inventory solution. The It supports the following capabilities:
 
-* Expose a simple user interface to support the demonstration scenario
-* Randomly create events about item sales or restocks and send them to Kafka or RabbitMQ or MQ depending of the demo settings.
+* Expose a simple user interface to support the demonstration end to end scenario
+* Randomly create item sale events ( includes restocks) and send them to Kafka or RabbitMQ or MQ depending of the demo settings.
+* Integrate with external services to query the item inventory and store inventory interactive queries supported by Kafka Streams. (See project: [refarch-eda-item-inventory](https://github.com/ibm-cloud-architecture/refarch-eda-item-inventory))
 
-It uses [Quarkus](https://quarkus.io) with the AMQP reactive messaging extension to send messages to RabbitMQ. This code is used to demonstrate RabbitMQ to Kafka with the IBM Kafka Connect [RabbitMQ source connector](https://github.com/ibm-messaging/kafka-connect-rabbitmq-source).
+This implementation is done with Java 11 and [Quarkus](https://quarkus.io) with the AMQP reactive messaging extension to send messages to RabbitMQ, or use the Kafka producer API to send message directly to kafka, or using JMS to send to IBM MQ. 
 
-Tested 10/06/2020 Quarkus 1.8.1 - Rabbit MQ 3.8 on local docker deployment
-and Kafka 2.6
+Tested 10/11/2020 Quarkus 1.8.3 - Rabbit MQ 3.8 on local docker deployment
+and Kafka 2.6. IBM MQ 9.2.
+
+## Run the application locally
+
+The end to end solution is documented in a separate deep dive lab in [this article](https://ibm-cloud-architecture.github.io/refarch-eda/scenarios/realtime-inventory/).
+
+With this repository you can validate sending message to the different backend from a single User interface. All the images are in docker hub, but you still need to get the configuration so you need to clone this repository: 
+
+```shell
+git clone https://github.com/ibm-cloud-architecture/refarch-eda-store-simulator
+```
+
+To run this application locally and assess the different integration middleware (Kafka, RabbitMQ or MQ) first start all the components:
+
+```shell
+cd environment/all
+docker-compose up&
+```
+
+### For Rabbit MQ
+
+
+Normally the queue is created automatically when running the app, but if you want to create it upfront the following steps can be done:
+
+* Download `rabbitmqadmin` client from http://localhost:15672/cli/rabbitmqadmin. One version of this script is available in the `environment` folder.
+
+* Declare the queue:
+
+```shell
+./rabbitmqadmin declare queue name=items durable=true -u rabbit-user -p rabbit-pass
+```
+
+* List the available queues: 
+
+```shell
+./rabbitmqadmin list declara queue name=items durable=false -u rabbit-user -p rabbit-pass
+```
+
+See more CLI options [here](https://www.rabbitmq.com/management-cli.html).
+
+To validate sending message to RabbitMQ do the following steps:
+
+* Go to the App console - simulator tab [http://localhost:8080/#/simulator](http://localhost:8080/#/simulator)
+* Select RabbitMQ and then the number of message to send.
+
+![](docs/rmq-simulator.png)
+
+* Access Rabbit MQ Console: [http://localhost:15672/#/](http://localhost:15672/#/) user rabbitmq
+
+![](docs/rmq-items-msg.png)
+
+### IBM MQ
+
+Using the same approach we can select to send to MQ:
+
+![](docs/mq-simulator.png)
+
+The simulator trace should display similar messages:
+
+```trace
+sent to MQ:{"id":0,"price":25.15,"quantity":4,"sku":"Item_2","storeName":"Store_2","timestamp":"2020-10-13T16:48:35.455027","type":"RESTOCK"}
+
+sent to MQ:{"id":1,"price":73.09,"quantity":3,"sku":"Item_1","storeName":"Store_1","timestamp":"2020-10-13T16:48:35.455082","type":"RESTOCK"}
+
+sent to MQ:{"id":2,"price":68.85,"quantity":2,"sku":"Item_4","storeName":"Store_4","timestamp":"2020-10-13T16:48:35.455123","type":"RESTOCK"}
+
+sent to MQ:{"id":3,"price":60.31,"quantity":9,"sku":"Item_2","storeName":"Store_5","timestamp":"2020-10-13T16:48:35.455168","type":"RESTOCK"}
+```
+
+And connecting to IBM MQ console [https://localhost:9443](https://localhost:9443/ibmmq/console/#/qmgr/QM1/queue/local/DEV.QUEUE.1/view), using admin/passw0rd credential:
+
+
+![](docs/MQ-message.png)
+
+
+### Kafka
+
+First be sure the items topic is created, if not running the following command will add it:
+
+```shell
+docker run -ti --network kafkanet strimzi/kafka:latest-kafka-2.6.0 bash -c "/opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --create  --replication-factor 1 --partitions 2 --topic items"
+
+```
+
+Finally same process applies for Kafka, from the simulator:
+
+![](docs/Kafka-simulator.png)
+
+Looking at the Simulator trace, you can see the record offset for the message sent.
+
+```trace
+sending to items item {"id":5,"price":44.12,"quantity":4,"sku":"Item_4","storeName":"Store_5","timestamp":"2020-10-13T16:15:30.790437","type":"SALE"}
+
+(kafka-producer-network-thread | StoreProducer-1) The offset of the record just sent is: 6
+```
+
+Or using the following command to consumer all the messages from the `items` topic:
+
+```shell
+docker run -ti --network kafkanet strimzi/kafka:latest-kafka-2.6.0 bash -c "/opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server kafka:9092 --topic items --from-beginning"
+```
+
 
 ## Development mode - run locally
 
-This section is used when developing the application. For pure demonstration of the application from pre-built images see [this section.](#demonstration)
-
-As the simulator can use different backend for the messaging we have set up 3 potential environments: kafka with local strimzi, rabbitmq and IBM mq.
-
-For each environment the call to `quarkus:dev` is done inside of a `maven` container so that the Quarkus application can access the target messaging product on the same docker network.
+When developing the application, you may want to test on only one back end. As the simulator can use three potential environments: kafka with local strimzi, rabbitmq and IBM MQ we have setup different docker compose configuration to run those middleware separately.
 
 ### RabbitMQ running the application in dev mode
 
@@ -30,11 +127,9 @@ docker-compose -f dev-docker-compose up
 
 Access the API via: [http://localhost:8080/swagger-ui/#/](http://localhost:8080/swagger-ui/#/)
 
-Access Rabbit MQ Console: [http://localhost:15672/#/](http://localhost:15672/#/) user rabbitmq
-
 In the Queues page, see the content of the `items` queue, and use the 'get messages' to see the queue content.
 
-The user interface is done in Vue.js under the webapp folder, so it is possible via proxy configuration see ([vue.config.js file]()) to start `yarn serve` and access the UI connected to the simulator backend.
+The user interface is done in Vue.js under the webapp folder, so it is possible via proxy configuration see ([vue.config.js file](https://github.com/ibm-cloud-architecture/refarch-eda-store-simulator/blob/master/webapp/vue.config.js)) to start `yarn serve` and access the UI connected to the simulator backend.
 
 ```shell
 # under webapp folder
@@ -46,7 +141,36 @@ yarn serve
 
 Go the [http://localhost:4545/#/](http://localhost:4545/#/) to see the UI. 
 
-Any development under the webapp will be automatically visible in the browser and any change to the quarkus app are also refected to make the end to end development very efficient.
+Any development under the webapp will be automatically visible in the browser and any change to the Quarkus app are also reflected to make the end to end development very efficient.
+
+### Kafka only for development
+
+The compose file is under `environment/kafka` folder.
+
+```shell
+# under environments/kafka folder
+docker-compose -f dev-docker-compose up
+
+# Under webapp folder
+# Compiles and hot-reloads for development
+yarn serve
+
+# under the root folder:
+/mvnw quarkus:dev
+```
+
+To work on the UI development and test go the [http://localhost:4545/#/](http://localhost:4545/#/) to see the UI. 
+
+To work on the backend API test: []()
+
+### IBM MQ only for development
+
+```shell
+# under environments/mq folder
+docker-compose -f dev-docker-compose up
+```
+
+Then same commands as above.
 
 ### Packaging the UI and Quarkus app
 
@@ -58,38 +182,20 @@ mvn package -DskipTests
 docker build -f src/main/docker/Dockerfile.jvm -t ibmcase/eda-store-simulator .
 ```
 
-To run one of the configuration with the image built:
-
-```shell
-# For rabbitmq only: under 
-cd environment/rabbitmq
-docker-compose up&
-# for Kafka 
-cd environment/kafka
-docker-compose up&
-```
-
-Access the User interface at [http://localhost:8080/](http://localhost:8080/).
-
-
 ## Implementation approach
 
-The application is using one REST resource for defining two simple API: 
+The application is using one REST resource for defining the needed APIs: 
 
-* `GET /sales` to get the last item sold.
-* `POST /sales/start/{records}` to start sending {records} number of message to MQ. 
+![](docs/api.png)
 
-The messages sent are defined in the [domain/ItemSaleMessage.java](https://github.com/jbcodeforce/eda-kconnect-lab/blob/master/store-sale-producer/src/main/java/ibm/gse/eda/stores/domain/ItemSaleMessage.java) class.
+The messages sent are defined in the [domain/Item.java](https://github.com/ibm-cloud-architecture/refarch-eda-store-simulator/blob/master/src/main/java/ibm/gse/eda/stores/domain/Item.java) class.
 
-The items sold are part of a simple predefined list of item with SKU from 'IT01 to IT09'. The content is generated randomly. 
+The items sold are part of a simple predefined list of item with SKU defined as
 
-Below is an example as json object:
-
-```json
-{"id":9,"price":3.9131141142105355,"quantity":5,"sku":"IT05","storeName":"PT01"}
+```java
+ static transient String[] skus = { "Item_1", "Item_2", "Item_3", "Item_4", "Item_5" };
+ 
 ```
-
-The [simple generator code](https://github.com/jbcodeforce/eda-kconnect-lab/blob/18c4fed416d92bb3cadce733e6d5352afafd1243/store-sale-producer/src/main/java/ibm/gse/eda/stores/infrastructure/ItemSaleGenerator.java#L76) is sending message to RabbitMQ using the AMQP API.
 
 The following extensions were added to add metrics, health end points, and OpenShift deployment manifests creation:
 
@@ -100,23 +206,13 @@ The following extensions were added to add metrics, health end points, and OpenS
 ./mvnw quarkus:add-extension -Dextensions="openshift"
 ```
 
-### Packaging and running the application
+See the [pom.xml](https://github.com/ibm-cloud-architecture/refarch-eda-store-simulator/blob/master/pom.xml) file detail.
 
-The application can be packaged using `./mvnw package`.
-It produces the `store-sale-producer-1.0.0-SNAPSHOT-runner.jar` file in the `/target` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/lib` directory.
+Each integration is done in a separate class under the infrastructure package:
 
-The application is now runnable using `java -jar target/store-sale-producer-1.0.0-SNAPSHOT-runner.jar`.
-
-### Creating a native executable
-
-You can create a native executable using: `./mvnw package -Pnative`.
-
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using: `./mvnw package -Pnative -Dquarkus.native.container-build=true`.
-
-You can then execute your native executable with: `./target/store-sale-producer-1.0.0-SNAPSHOT-runner`
-
-If you want to learn more about building native executables, please consult https://quarkus.io/guides/building-native-image.
+* [Kafka producer with basic API](https://github.com/ibm-cloud-architecture/refarch-eda-store-simulator/blob/master/src/main/java/ibm/gse/eda/stores/infrastructure/kafka/KafkaItemGenerator.java)
+* [Rabbit MQ with reactive messaging and AMQP](https://github.com/ibm-cloud-architecture/refarch-eda-store-simulator/blob/master/src/main/java/ibm/gse/eda/stores/infrastructure/rabbitmq/RabbitMQItemGenerator.java)
+* [IBM MQ with JMS producer](https://github.com/ibm-cloud-architecture/refarch-eda-store-simulator/blob/master/src/main/java/ibm/gse/eda/stores/infrastructure/mq/MQItemGenerator.java)
 
 ## Deploy and run on OpenShift
 
@@ -131,7 +227,3 @@ To package the app as docker images with a build on OpenShift, using the source 
 ```shell
 ./mvnw clean package -Dquarkus.container-image.build=true -Dquarkus.container-image.group=ibmcase -Dquarkus.container-image.tag=1.0.0
 ```
-
-## Demonstration
-
-### Demonstrating with Rabbit MQ

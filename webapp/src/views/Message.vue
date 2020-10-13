@@ -3,7 +3,7 @@
     <v-col sm="8" offset-sm="2">
       <v-data-table
         :headers="headers"
-        :items="data"
+        :items="messagesIn"
         sort-by="Id"
         class="elevation-1"
       >
@@ -23,7 +23,7 @@
 export default {
   name: "Messages",
   props: {
-    data: [],
+    messagesIn: [],
   },
   data: () => ({
     headers: [
