@@ -216,6 +216,23 @@ Each integration is done in a separate class under the infrastructure package:
 
 ## Deploy and run on OpenShift
 
+### Rabbitmq operator and instance
+
+See [the installation instructions]() to get a RabbitMQ operator installed and [this note for one instance](https://www.rabbitmq.com/kubernetes/operator/using-operator.html). 
+
+```
+kubectl get customresourcedefinitions.apiextensions.k8s.io
+# create an instance
+oc apply -f <<EOF 
+apiVersion: rabbitmq.com/v1beta1
+kind: RabbitmqCluster
+metadata:
+  name: jb-rmqcluster
+spec:
+  replicas: 1
+EOF
+```
+
 We have defined a ConfigMap to deploy to the OpenShift project so environment variables can be loaded from the config map at runtime.
 
 ```
