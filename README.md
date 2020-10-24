@@ -21,7 +21,7 @@ With this repository you can validate sending message to the different backend f
 git clone https://github.com/ibm-cloud-architecture/refarch-eda-store-simulator
 ```
 
-To run this application locally and assess the different integration middleware (Kafka, RabbitMQ or MQ) first start all the components:
+To run this application locally and assess all the different integration middleware (Kafka, RabbitMQ or MQ) first start all the components:
 
 ```shell
 cd environment/all
@@ -29,7 +29,6 @@ docker-compose up&
 ```
 
 ### For Rabbit MQ
-
 
 Normally the queue is created automatically when running the app, but if you want to create it upfront the following steps can be done:
 
@@ -41,30 +40,30 @@ Normally the queue is created automatically when running the app, but if you wan
 ./rabbitmqadmin declare queue name=items durable=true -u rabbit-user -p rabbit-pass
 ```
 
-* List the available queues: 
+* List the available queues:
 
 ```shell
 ./rabbitmqadmin list declara queue name=items durable=false -u rabbit-user -p rabbit-pass
 ```
 
-See more CLI options [here](https://www.rabbitmq.com/management-cli.html).
+See more rabbitmqadmin CLI options [here](https://www.rabbitmq.com/management-cli.html).
 
 To validate sending message to RabbitMQ do the following steps:
 
 * Go to the App console - simulator tab [http://localhost:8080/#/simulator](http://localhost:8080/#/simulator)
 * Select RabbitMQ and then the number of message to send.
 
-![](docs/rmq-simulator.png)
+![1](docs/rmq-simulator.png)
 
-* Access Rabbit MQ Console: [http://localhost:15672/#/](http://localhost:15672/#/) user rabbitmq
+* Access Rabbit MQ Console: [http://localhost:15672/#/](http://localhost:15672/#/) user RabbitMQ
 
-![](docs/rmq-items-msg.png)
+![2](docs/rmq-items-msg.png)
 
 ### IBM MQ
 
 Using the same approach we can select to send to MQ:
 
-![](docs/mq-simulator.png)
+![3](docs/mq-simulator.png)
 
 The simulator trace should display similar messages:
 
@@ -80,9 +79,7 @@ sent to MQ:{"id":3,"price":60.31,"quantity":9,"sku":"Item_2","storeName":"Store_
 
 And connecting to IBM MQ console [https://localhost:9443](https://localhost:9443/ibmmq/console/#/qmgr/QM1/queue/local/DEV.QUEUE.1/view), using admin/passw0rd credential:
 
-
-![](docs/MQ-message.png)
-
+![4](docs/MQ-message.png)
 
 ### Kafka
 
@@ -95,7 +92,7 @@ docker run -ti --network kafkanet strimzi/kafka:latest-kafka-2.6.0 bash -c "/opt
 
 Finally same process applies for Kafka, from the simulator:
 
-![](docs/Kafka-simulator.png)
+![6](docs/Kafka-simulator.png)
 
 Looking at the Simulator trace, you can see the record offset for the message sent.
 
@@ -111,10 +108,9 @@ Or using the following command to consumer all the messages from the `items` top
 docker run -ti --network kafkanet strimzi/kafka:latest-kafka-2.6.0 bash -c "/opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server kafka:9092 --topic items --from-beginning"
 ```
 
-
 ## Development mode - run locally
 
-When developing the application, you may want to test on only one back end. As the simulator can use three potential environments: kafka with local strimzi, rabbitmq and IBM MQ we have setup different docker compose configuration to run those middleware separately.
+When developing the application, you may want to test against only one backend. As the simulator can use three potential environments: kafka with local strimzi, rabbitmq and IBM MQ we have setup different docker compose configuration to run those middleware separately.
 
 ### RabbitMQ running the application in dev mode
 
@@ -178,7 +174,7 @@ Then same commands as above.
 # under webapp
 yarn build
 # under root folder
-mvn package -DskipTests
+mvn package
 docker build -f src/main/docker/Dockerfile.jvm -t ibmcase/eda-store-simulator .
 ```
 
@@ -186,7 +182,7 @@ docker build -f src/main/docker/Dockerfile.jvm -t ibmcase/eda-store-simulator .
 
 The application is using one REST resource for defining the needed APIs: 
 
-![](docs/api.png)
+![8](docs/api.png)
 
 The messages sent are defined in the [domain/Item.java](https://github.com/ibm-cloud-architecture/refarch-eda-store-simulator/blob/master/src/main/java/ibm/gse/eda/stores/domain/Item.java) class.
 
@@ -216,11 +212,11 @@ Each integration is done in a separate class under the infrastructure package:
 
 ## Deploy and run on OpenShift
 
-### Rabbitmq operator and instance
+### RabbitMQ operator and instance
 
 See [the installation instructions]() to get a RabbitMQ operator installed and [this note for one instance](https://www.rabbitmq.com/kubernetes/operator/using-operator.html). 
 
-```
+```shell
 kubectl get customresourcedefinitions.apiextensions.k8s.io
 # create an instance
 oc apply -f <<EOF 

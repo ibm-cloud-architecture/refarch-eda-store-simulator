@@ -20,11 +20,11 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 
 import ibm.gse.eda.stores.domain.Item;
-import ibm.gse.eda.stores.infrastructure.BaseGenerator;
+import ibm.gse.eda.stores.infrastructure.StoreRepository;
 import io.smallrye.mutiny.Multi;
 
 @ApplicationScoped
-public class MQItemGenerator extends BaseGenerator{
+public class MQItemGenerator {
     private static Logger logger = Logger.getLogger(MQItemGenerator.class.getName());
 
     @Inject
@@ -59,6 +59,9 @@ public class MQItemGenerator extends BaseGenerator{
     @ConfigProperty(name = "app.name", defaultValue = "TestApp")
     public String appName;
     
+    @Inject
+    public StoreRepository storeRepository;
+    
     private Jsonb parser = JsonbBuilder.create();
 
 
@@ -69,7 +72,7 @@ public class MQItemGenerator extends BaseGenerator{
     protected Jsonb jsonb = null;
     
 	public List<Item> start(int numberOfRecords) {
-        List<Item> items = buildItems(numberOfRecords);
+        List<Item> items = storeRepository.buildItems(numberOfRecords);
         try {
             jmsContext = buildJMSConnectionSession();
             producer = jmsContext.createProducer();

@@ -4,7 +4,7 @@ metadata:
   name: store-sale-cm
 data:
   # property-like keys; each key maps to a simple value
-  RMQ_HOST: salut
+  RMQ_HOST: localhost
   RMQ_PORT: 5672
   RMQ_USER: rabbitmq
   RMQ_PWD: password

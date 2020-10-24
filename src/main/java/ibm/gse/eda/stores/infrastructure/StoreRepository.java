@@ -1,21 +1,23 @@
 package ibm.gse.eda.stores.infrastructure;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Singleton;
 
+import ibm.gse.eda.stores.domain.Item;
 import ibm.gse.eda.stores.domain.Store;
 import io.smallrye.mutiny.Multi;
 
-@ApplicationScoped
-public class StoreRepository {
+@Singleton
+public class StoreRepository  {
     
-    HashMap<String,Store> stores;
+    static HashMap<String,Store> stores =new HashMap<String,Store>();
 
     public StoreRepository(){
-        stores = new HashMap<String,Store>();
         Store s = new Store("Store_1","Santa Clara", "CA", "95051");
         stores.put(s.name, s);
         s = new Store("Store_2","Ithaca", "NY", "14850");
@@ -39,5 +41,13 @@ public class StoreRepository {
 
     public Collection<String> getStoreNameList(){
         return stores.keySet();
+    }
+
+    public List<Item> buildItems(int nbItem) {
+        List<Item> items = new ArrayList<Item>();
+        for (int i = 0; i < nbItem; i++) {
+            items.add(Item.buildRandomItem(i,getStoreNames()));
+        }
+        return items;
     }
 }

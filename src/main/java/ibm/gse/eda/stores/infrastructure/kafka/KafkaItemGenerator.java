@@ -21,6 +21,7 @@ import java.util.Properties;
 import java.util.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.producer.Callback;
@@ -34,7 +35,7 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import ibm.gse.eda.stores.domain.Item;
-import ibm.gse.eda.stores.infrastructure.BaseGenerator;
+import ibm.gse.eda.stores.infrastructure.StoreRepository;
 import io.quarkus.kafka.client.serialization.JsonbSerializer;
 import io.smallrye.mutiny.Multi;
 
@@ -45,7 +46,7 @@ import io.smallrye.mutiny.Multi;
  * reactive messaging API
  */
 @ApplicationScoped
-public class KafkaItemGenerator extends BaseGenerator {
+public class KafkaItemGenerator {
     Logger logger = Logger.getLogger(KafkaItemGenerator.class.getName());
 
     @ConfigProperty(name = "kafka.topic.name", defaultValue = "items")
@@ -89,6 +90,9 @@ public class KafkaItemGenerator extends BaseGenerator {
 
     private KafkaProducer<String, Item> kafkaProducer = null;
 
+    @Inject
+    public StoreRepository storeRepository;
+    
     public KafkaItemGenerator() {
     }
 
@@ -107,7 +111,7 @@ public class KafkaItemGenerator extends BaseGenerator {
    
 
     public List<Item> start(Integer numberOfRecords) {
-        List<Item> items = buildItems(numberOfRecords);
+        List<Item> items = storeRepository.buildItems(numberOfRecords);
         Multi.createFrom().items(items.stream()).subscribe().with(item -> {
             sendToKafka(item);
         }, failure -> System.out.println("Failed with " + failure.getMessage()), () -> close());
