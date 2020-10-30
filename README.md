@@ -6,7 +6,7 @@ The store sales simulator application aims to demonstrate the end to end for Kaf
 * Randomly create item sale events ( includes restocks) and send them to Kafka or RabbitMQ or MQ depending of the demo settings.
 * Integrate with external services to query the item inventory and store inventory interactive queries supported by Kafka Streams. (See project: [refarch-eda-item-inventory](https://github.com/ibm-cloud-architecture/refarch-eda-item-inventory))
 
-This implementation is done with Java 11 and [Quarkus](https://quarkus.io) with the AMQP reactive messaging extension to send messages to RabbitMQ, or use the Kafka producer API to send message directly to kafka, or using JMS to send to IBM MQ. 
+This implementation is done with Java 11 and [Quarkus](https://quarkus.io) with the AMQP reactive messaging extension to send messages to RabbitMQ, or use the Kafka producer API to send message directly to Kafka, or using JMS to send to IBM MQ. 
 
 Tested 10/11/2020 Quarkus 1.8.3 - Rabbit MQ 3.8 on local docker deployment
 and Kafka 2.6. IBM MQ 9.2.
@@ -139,7 +139,7 @@ Go the [http://localhost:4545/#/](http://localhost:4545/#/) to see the UI.
 
 Any development under the webapp will be automatically visible in the browser and any change to the Quarkus app are also reflected to make the end to end development very efficient.
 
-### Kafka only for development
+### Kafka only (for development)
 
 The compose file is under `environment/kafka` folder.
 
@@ -212,31 +212,8 @@ Each integration is done in a separate class under the infrastructure package:
 
 ## Deploy and run on OpenShift
 
-### RabbitMQ operator and instance
-
-See [the installation instructions]() to get a RabbitMQ operator installed and [this note for one instance](https://www.rabbitmq.com/kubernetes/operator/using-operator.html). 
-
-```shell
-kubectl get customresourcedefinitions.apiextensions.k8s.io
-# create an instance
-oc apply -f <<EOF 
-apiVersion: rabbitmq.com/v1beta1
-kind: RabbitmqCluster
-metadata:
-  name: jb-rmqcluster
-spec:
-  replicas: 1
-EOF
-```
-
-We have defined a ConfigMap to deploy to the OpenShift project so environment variables can be loaded from the config map at runtime.
-
-```
-oc apply -f src/main/kubernetes/store-sale-cm.yaml
-```
-
 To package the app as docker images with a build on OpenShift, using the source to image approach run the following command:
 
 ```shell
-./mvnw clean package -Dquarkus.container-image.build=true -Dquarkus.container-image.group=ibmcase -Dquarkus.container-image.tag=1.0.0
+./mvnw clean package -Dui.deps -Dui.dev -Dquarkus.container-image.build=true -Dquarkus.container-image.group=ibmcase -Dquarkus.container-image.tag=1.0.0 -Dquarkus.kubernetes.deploy=true
 ```
