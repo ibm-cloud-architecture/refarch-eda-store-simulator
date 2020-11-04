@@ -1,0 +1,27 @@
+version: '3.7'
+services:
+  # credentials guest:guest
+  rabbitmq:
+      hostname: rabbitmq
+      image: rabbitmq:3-management
+      ports:
+          - '15672:15672'
+          - '5672:5672'
+      environment:
+          RABBITMQ_DEFAULT_USER: rabbit-user
+          RABBITMQ_DEFAULT_PASS: rabbit-pass
+      volumes:
+          - ./enable_plugins:/etc/rabbitmq/enabled_plugins
+  simulator:
+    image: ibmcase/eda-store-simulator
+    depends_on:
+      - rabbitmq
+    environment:
+      APP_TARGET_MESSAGING: RabbitMQ
+      AMQP_USERNAME: rabbit-user
+      AMQP_PASSWORD: rabbit-pass
+      AMQP_HOST: rabbitmq
+    hostname: storeapp
+    ports:
+      - "8080:8080"
+      

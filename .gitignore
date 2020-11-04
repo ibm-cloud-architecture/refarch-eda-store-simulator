@@ -1,4 +1,4 @@
-rabbitmq/
+
 # Eclipse
 .project
 .classpath
@@ -29,6 +29,9 @@ nb-configuration.xml
 *.rej
 
 # Maven
+environments/kafka/data/
+environments/all/data/
+environments/rabbitma/data/
 target/
 pom.xml.tag
 pom.xml.releaseBackup
