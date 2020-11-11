@@ -25,8 +25,8 @@ public class Item {
 
         static transient Random random = new Random();
         static transient int maxQuantity = 10;
-        static transient int maxPrice = 100;
-        static transient String[] skus = { "Item_1", "Item_2", "Item_3", "Item_4", "Item_5" };
+        static transient int maxPrice = 140;
+        static transient String[] skus = { "Item_1", "Item_2", "Item_3", "Item_4", "Item_5", "Item_6","Item_7"};
  
         public Item() {
         }
