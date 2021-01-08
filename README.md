@@ -2,13 +2,13 @@
 
 The store sales simulator application aims to demonstrate the end to end for Kafka based item inventory solution. The It supports the following capabilities:
 
-* Expose a simple user interface to support the demonstration end to end scenario
+* Expose a simple user interface to support the demonstration of the inventory analytics scenario
 * Randomly create item sale events ( includes restocks) and send them to Kafka or RabbitMQ or MQ depending of the demo settings.
 * Integrate with external services to query the item inventory and store inventory interactive queries supported by Kafka Streams. (See project: [refarch-eda-item-inventory](https://github.com/ibm-cloud-architecture/refarch-eda-item-inventory))
 
 This implementation is done with Java 11 and [Quarkus](https://quarkus.io) with the AMQP reactive messaging extension to send messages to RabbitMQ, or use the Kafka producer API to send message directly to Kafka, or using JMS to send to IBM MQ. 
 
-Tested 10/11/2020 Quarkus 1.8.3 - Rabbit MQ 3.8 on local docker deployment
+Tested 01/06/2021 Quarkus 1.10.5- Rabbit MQ 3.8 on local docker deployment
 and Kafka 2.6. IBM MQ 9.2.
 
 ## Run the application locally
@@ -30,23 +30,25 @@ docker-compose up&
 
 ### For Rabbit MQ
 
-Normally the queue is created automatically when running the app, but if you want to create it upfront the following steps can be done:
+Normally the queue is created automatically when running the app, but if you want to create it upfront, the following steps can be done:
 
 * Download `rabbitmqadmin` client from http://localhost:15672/cli/rabbitmqadmin. One version of this script is available in the `environment` folder.
 
 * Declare the queue:
 
 ```shell
+# under environment folder
 ./rabbitmqadmin declare queue name=items durable=true -u rabbit-user -p rabbit-pass
 ```
 
 * List the available queues:
 
 ```shell
+# under environment folder
 ./rabbitmqadmin list declara queue name=items durable=false -u rabbit-user -p rabbit-pass
 ```
 
-See more rabbitmqadmin CLI options [here](https://www.rabbitmq.com/management-cli.html).
+See more rabbitmqadmin CLI options [in https://www.rabbitmq.com/management-cli.html](https://www.rabbitmq.com/management-cli.html).
 
 To validate sending message to RabbitMQ do the following steps:
 
@@ -212,8 +214,8 @@ Each integration is done in a separate class under the infrastructure package:
 
 ## Deploy and run on OpenShift
 
-To package the app as docker images with a build on OpenShift, using the source to image approach run the following command:
+To package the app as docker images with a build on OpenShift, using the source to image approach, run the following command:
 
 ```shell
-./mvnw clean package -Dui.deps -Dui.dev -Dquarkus.container-image.build=true -Dquarkus.container-image.group=ibmcase -Dquarkus.container-image.tag=1.0.0 -Dquarkus.kubernetes.deploy=true
+./mvnw clean package -Dui.deps -Dui.dev -Dquarkus.container-image.build=true -Dquarkus.container-image.group=ibmcase -Dquarkus.container-image.tag=1.0.0 -Dquarkus.kubernetes.deploy=true -DskipTests
 ```
