@@ -1,15 +1,26 @@
 # Store sale event producer simulator
 
-The store sales simulator application aims to demonstrate the end to end for Kafka based item inventory solution. The It supports the following capabilities:
+The store sales simulator application aims to demonstrate end to end real time inventory solution. It supports the following capabilities:
 
-* Expose a simple user interface to support the demonstration of the inventory analytics scenario
-* Randomly create item sale events ( includes restocks) and send them to Kafka or RabbitMQ or MQ depending of the demo settings.
+* Expose a simple user interface to simulate store selling items which are sent to Queue or Topic. 
+* Randomly create item sale events ( includes restocks) and send them to Kafka or RabbitMQ or IBM MQ depending of the application configuration.
 * Integrate with external services to query the item inventory and store inventory interactive queries supported by Kafka Streams. (See project: [refarch-eda-item-inventory](https://github.com/ibm-cloud-architecture/refarch-eda-item-inventory))
 
 This implementation is done with Java 11 and [Quarkus](https://quarkus.io) with the AMQP reactive messaging extension to send messages to RabbitMQ, or use the Kafka producer API to send message directly to Kafka, or using JMS to send to IBM MQ. 
 
 Tested 01/06/2021 Quarkus 1.10.5- Rabbit MQ 3.8 on local docker deployment
 and Kafka 2.6. IBM MQ 9.2.
+Update 04/01/2101: Quarkus 1.13, Add Kustomize for gitops deployment
+
+## Build the application
+
+The docker image for this application is already available on [docker hub](https://hub.docker.com/repository/docker/ibmcase/eda-store-simulator) and [quay.io]() registries.
+
+To build locally run the following command:
+
+```shell
+./scripts/buildAll.sh 
+```
 
 ## Run the application locally
 
