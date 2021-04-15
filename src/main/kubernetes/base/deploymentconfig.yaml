@@ -23,6 +23,9 @@ spec:
       - args:
         - -Dquarkus.http.host=0.0.0.0
         - -Djava.util.logging.manager=org.jboss.logmanager.LogManager
+        - -Djavax.net.ssl.trustStoreType=jks
+        - -Djavax.net.ssl.trustStore=/deployments/certs/mq-tls/mq-tls.jks
+        - -Djavax.net.ssl.trustStorePassword=my-mq-password
         - -jar
         - /deployments/quarkus-run.jar
         command:
@@ -42,6 +45,8 @@ spec:
           value: tls-user
         - name: KAFKA_BROKERS
           value: lab-kafka-bootstrap.jb-lab.svc:9093
+        - name: MQ_CIPHER_SUITE
+          value: TLS12ORHIGHER
         - name: USER_CERT_PATH
           value: /deployments/certs/user/user.p12
         - name: USER_CERT_PWD
@@ -49,20 +54,30 @@ spec:
             secretKeyRef:
               key: user.password
               name: tls-user
+              optional: true
         - name: KAFKA_CERT_PWD
           valueFrom:
             secretKeyRef:
               key: ca.password
               name: lab-kafka-cluster-ca-cert
+              optional: true
         - name: KAFKA_PASSWORD
           valueFrom:
             secretKeyRef:
               key: user.password
               name: tls-user
+              optional: true
+        - name: KAFKA_CERT_PATH
+          value: /deployments/certs/server/ca.p12
+        - name: MQ_CCDT_URL
+          value: /deployments/certs/mq-ccdt/mq-ccdt.json
         - name: JAVA_APP_JAR
           value: /deployments/quarkus-run.jar
+        envFrom:
+        - configMapRef:
+            name: store-simulator-cm
         image: quay.io/ibmcase/eda-store-simulator
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         livenessProbe:
           failureThreshold: 3
           httpGet:
@@ -93,6 +108,14 @@ spec:
           name: kafka-cert
           readOnly: false
           subPath: ""
+        - mountPath: /deployments/certs/mq-ccdt
+          name: mq-ccdt-config
+          readOnly: false
+          subPath: ""
+        - mountPath: /deployments/certs/mq-tls
+          name: mq-tls-truststore
+          readOnly: false
+          subPath: ""
         - mountPath: /deployments/certs/user
           name: user-cert
           readOnly: false
@@ -102,10 +125,20 @@ spec:
       - name: kafka-cert
         secret:
           defaultMode: 384
-          optional: false
+          optional: true
           secretName: lab-kafka-cluster-ca-cert
-      - name: user-cert
+      - name: mq-tls-truststore
         secret:
           defaultMode: 384
           optional: false
+          secretName: store-simulator-mq-truststore
+      - name: user-cert
+        secret:
+          defaultMode: 384
+          optional: true
           secretName: tls-user
+      - name: mq-ccdt-config
+        configMap:
+          defaultMode: 384
+          optional: false
+          name: mq-ccdt-config
