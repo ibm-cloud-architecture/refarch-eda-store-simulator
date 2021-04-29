@@ -103,7 +103,7 @@ public class KafkaItemGenerator {
         return kafkaProducer;
     }
 
-    public void close(){
+    public void close(){. 
         kafkaProducer.close();
         kafkaProducer = null;
     }
