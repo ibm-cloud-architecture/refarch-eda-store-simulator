@@ -103,7 +103,7 @@ public class KafkaItemGenerator {
         return kafkaProducer;
     }
 
-    public void close(){. 
+    public void close(){
         kafkaProducer.close();
         kafkaProducer = null;
     }
@@ -150,7 +150,11 @@ public class KafkaItemGenerator {
         if (!kafkaSecurityProtocol.isEmpty()) {
             properties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, kafkaSecurityProtocol.get());
             properties.put(SaslConfigs.SASL_JAAS_CONFIG, saslJaasConfig.get());
-            properties.put(SslConfigs.SSL_PROTOCOL_CONFIG, sslProtocol.get());
+            
+            if (! sslProtocol.isEmpty()) {
+                properties.put(SslConfigs.SSL_PROTOCOL_CONFIG, sslProtocol.get());
+            }
+            
             properties.put(SaslConfigs.SASL_MECHANISM, kafkaSaslMechanism.get());
 
             if ("SSL".equals(kafkaSaslMechanism.get())) {
