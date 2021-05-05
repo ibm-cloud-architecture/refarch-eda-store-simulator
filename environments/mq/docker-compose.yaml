@@ -16,29 +16,15 @@ services:
         MQ_QMGR_NAME: QM1
         MQ_APP_PASSWORD: passw0rd
         MQ_ENABLE_METRICS: "true"
-    networks:
-      - kafka-network
-  maven:
-    image: maven
-    volumes:
-      - "../../:/app"
-      - "~/.m2:/root/.m2"
+  simulator:
+    image: ibmcase/eda-store-simulator
     depends_on:
       - ibmmq
-    hostname: storeapp
     environment:
       APP_TARGET_MESSAGING: IBMMQ
       MQ_HOST: ibmmq
-      QUARKUS_PROFILE: dev
+    hostname: storeapp
     ports:
       - "8080:8080"
-      - "5005:5005"
-    working_dir: /app
-    command: "./mvnw quarkus:dev"
-    networks:
-      - kafka-network
 volumes:
   qm1data:
-networks:
-  kafka-network:
-    name: kafkanet

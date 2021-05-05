@@ -10,23 +10,32 @@ This implementation is done with Java 11 and [Quarkus](https://quarkus.io) with 
 
 Tested 01/06/2021 Quarkus 1.10.5- Rabbit MQ 3.8 on local docker deployment
 and Kafka 2.6. IBM MQ 9.2.
-Update 04/01/2101: Quarkus 1.13, Add Kustomize for gitops deployment
+Update 04/01/2021: Quarkus 1.13, Add Kustomize for gitops deployment
+Update 05/04/2021: Quarkus 1.13.2, Simplify environment folder, add codeql-analysis git workflow.
 
 ## Build the application
 
-The docker image for this application is already available on [docker hub](https://hub.docker.com/repository/docker/ibmcase/eda-store-simulator) and [quay.io]() registries.
+The docker image for this application is already available on [quay.io registry](https://quay.io/ibmcase/eda-store-simulator).
 
-To build locally run the following command:
+The buildAll.sh scripts runs Maven packaging and docker build and push. So we need to change this script to push to your own registry.
 
 ```shell
 ./scripts/buildAll.sh 
+```
+
+To only build the jar file do:
+
+```sh
+./mvnw clean package -Dui.deps -Dui.dev -DskipTests
+# Without UI
+./mvnw clean package -DskipTests
 ```
 
 ## Run the application locally
 
 The end to end solution is documented in a separate deep dive lab in [this article](https://ibm-cloud-architecture.github.io/refarch-eda/scenarios/realtime-inventory/).
 
-With this repository you can validate sending message to the different backend from a single User interface. All the images are in docker hub, but you still need to get the configuration so you need to clone this repository: 
+With this repository you can validate sending message to the different backend from a single User interface. All the images are in quay.io or docker hub, but you still need to get the configuration so you need to clone this repository: 
 
 ```shell
 git clone https://github.com/ibm-cloud-architecture/refarch-eda-store-simulator
@@ -36,7 +45,7 @@ To run this application locally and assess all the different integration middlew
 
 ```shell
 cd environment/all
-docker-compose up&
+docker-compose up -d 
 ```
 
 ### For Rabbit MQ
@@ -64,17 +73,17 @@ See more rabbitmqadmin CLI options [in https://www.rabbitmq.com/management-cli.h
 To validate sending message to RabbitMQ do the following steps:
 
 * Go to the App console - simulator tab [http://localhost:8080/#/simulator](http://localhost:8080/#/simulator)
-* Select RabbitMQ and then the number of message to send.
+* Select RabbitMQ toggle and then the number of message to send.
 
 ![1](docs/rmq-simulator.png)
 
-* Access Rabbit MQ Console: [http://localhost:15672/#/](http://localhost:15672/#/) user RabbitMQ
+* Access Rabbit MQ Console: [http://localhost:15672/#/](http://localhost:15672/#/) user RabbitMQ, to verify messages are in the queue,
 
 ![2](docs/rmq-items-msg.png)
 
 ### IBM MQ
 
-Using the same approach we can select to send to MQ:
+Using the same approach as above, we can select to send to IBM MQ: use the IBM MQ toggle and send some messages: 
 
 ![3](docs/mq-simulator.png)
 
@@ -94,13 +103,14 @@ And connecting to IBM MQ console [https://localhost:9443](https://localhost:9443
 
 ![4](docs/MQ-message.png)
 
+Verify messages are sent.
+
 ### Kafka
 
 First be sure the items topic is created, if not running the following command will add it:
 
 ```shell
-docker run -ti --network kafkanet strimzi/kafka:latest-kafka-2.6.0 bash -c "/opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --create  --replication-factor 1 --partitions 2 --topic items"
-
+./scripts/createTopics.sh
 ```
 
 Finally same process applies for Kafka, from the simulator:
@@ -123,7 +133,7 @@ docker run -ti --network kafkanet strimzi/kafka:latest-kafka-2.6.0 bash -c "/opt
 
 ## Development mode - run locally
 
-When developing the application, you may want to test against only one backend. As the simulator can use three potential environments: kafka with local strimzi, rabbitmq and IBM MQ we have setup different docker compose configuration to run those middleware separately.
+When developing the application, you may want to test against only one backend. As the simulator can use three potential environments: kafka with local strimzi, Rabbitmq and IBM MQ, we have setup different docker compose configuration to run those middleware separately.
 
 ### RabbitMQ running the application in dev mode
 
@@ -131,7 +141,9 @@ Go under the `environments/rabbitmq` folder and start the two docker containers:
 
 ```shell
 # under environments/rabbitmq folder
-docker-compose -f dev-docker-compose up
+docker-compose docker-compose up
+# Start quarkus
+./mvnw quarkus:dev
 ```
 
 Access the API via: [http://localhost:8080/swagger-ui/#/](http://localhost:8080/swagger-ui/#/)
@@ -158,7 +170,7 @@ The compose file is under `environment/kafka` folder.
 
 ```shell
 # under environments/kafka folder
-docker-compose -f dev-docker-compose up
+docker-compose up -d
 
 # Under webapp folder
 # Compiles and hot-reloads for development
@@ -176,7 +188,7 @@ To work on the backend API test: []()
 
 ```shell
 # under environments/mq folder
-docker-compose -f dev-docker-compose up
+docker-compose  up -d
 ```
 
 Then same commands as above.
@@ -225,8 +237,16 @@ Each integration is done in a separate class under the infrastructure package:
 
 ## Deploy and run on OpenShift
 
-To package the app as docker images with a build on OpenShift, using the source to image approach, run the following command:
+To package the app as docker images with a build on OpenShift, using the source to image approach, by running the following command:
 
 ```shell
 ./mvnw clean package -Dui.deps -Dui.dev -Dquarkus.container-image.build=true -Dquarkus.container-image.group=ibmcase -Dquarkus.container-image.tag=1.0.0 -Dquarkus.kubernetes.deploy=true -DskipTests
+```
+
+If you want to use Kustomize the `src/main/kubernetes` folder includes the necessary yaml manifests to deploy to an OpenShift cluster using `Kustomize`:
+
+```sh
+oc login ....
+oc new-project test-store-simul
+oc apply -k src/main/kubernetes
 ```
