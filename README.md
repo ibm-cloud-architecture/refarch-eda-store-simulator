@@ -6,12 +6,23 @@ The store sales simulator application aims to demonstrate end to end real time i
 * Randomly create item sale events ( includes restocks) and send them to Kafka or RabbitMQ or IBM MQ depending of the application configuration.
 * Integrate with external services to query the item inventory and store inventory interactive queries supported by Kafka Streams. (See project: [refarch-eda-item-inventory](https://github.com/ibm-cloud-architecture/refarch-eda-item-inventory))
 
-This implementation is done with Java 11 and [Quarkus](https://quarkus.io) with the AMQP reactive messaging extension to send messages to RabbitMQ, or use the Kafka producer API to send message directly to Kafka, or using JMS to send to IBM MQ. 
+This implementation is done with Java 11 and [Quarkus](https://quarkus.io) with the AMQP reactive messaging extension to send messages to RabbitMQ, 
+or with the Kafka producer API to send message directly to Kafka, or using JMS to send to IBM MQ. 
 
-Tested 01/06/2021 Quarkus 1.10.5- Rabbit MQ 3.8 on local docker deployment
-and Kafka 2.6. IBM MQ 9.2.
-Update 04/01/2021: Quarkus 1.13, Add Kustomize for gitops deployment
-Update 05/04/2021: Quarkus 1.13.2, Simplify environment folder, add codeql-analysis git workflow.
+The end to end solution is documented in a separate deep dive lab in [this article](https://ibm-cloud-architecture.github.io/refarch-eda/scenarios/realtime-inventory/).
+
+With this repository you can validate sending message to the different backends from a single User interface. All the images are in `quay.io` registry, but
+for development and access to docker compose and other scripts clone this repository. 
+
+```shell
+git clone https://github.com/ibm-cloud-architecture/refarch-eda-store-simulator
+```
+
+Updates:
+
+* 01/06/2021: Quarkus 1.10.5- Rabbit MQ 3.8 on local docker deployment, and Kafka 2.6. IBM MQ 9.2.
+* 04/01/2021: Quarkus 1.13, Add Kustomize for gitops deployment
+* 05/04/2021: Quarkus 1.13.2, Simplify environment folder, add codeql-analysis git workflow.
 
 ## Build the application
 
@@ -20,6 +31,7 @@ The docker image for this application is already available on [quay.io registry]
 The buildAll.sh scripts runs Maven packaging and docker build and push. So we need to change this script to push to your own registry.
 
 ```shell
+docker login quay.io -u ...
 ./scripts/buildAll.sh 
 ```
 
@@ -32,14 +44,6 @@ To only build the jar file do:
 ```
 
 ## Run the application locally
-
-The end to end solution is documented in a separate deep dive lab in [this article](https://ibm-cloud-architecture.github.io/refarch-eda/scenarios/realtime-inventory/).
-
-With this repository you can validate sending message to the different backend from a single User interface. All the images are in quay.io or docker hub, but you still need to get the configuration so you need to clone this repository: 
-
-```shell
-git clone https://github.com/ibm-cloud-architecture/refarch-eda-store-simulator
-```
 
 To run this application locally and assess all the different integration middleware (Kafka, RabbitMQ or MQ) first start all the components:
 
@@ -81,7 +85,7 @@ To validate sending message to RabbitMQ do the following steps:
 
 ![2](docs/rmq-items-msg.png)
 
-### IBM MQ
+### For IBM MQ
 
 Using the same approach as above, we can select to send to IBM MQ: use the IBM MQ toggle and send some messages: 
 
@@ -105,7 +109,7 @@ And connecting to IBM MQ console [https://localhost:9443](https://localhost:9443
 
 Verify messages are sent.
 
-### Kafka
+### For Kafka
 
 First be sure the items topic is created, if not running the following command will add it:
 
@@ -133,7 +137,8 @@ docker run -ti --network kafkanet strimzi/kafka:latest-kafka-2.6.0 bash -c "/opt
 
 ## Development mode - run locally
 
-When developing the application, you may want to test against only one backend. As the simulator can use three potential environments: kafka with local strimzi, Rabbitmq and IBM MQ, we have setup different docker compose configuration to run those middleware separately.
+When developing the application, you may want to test against only one backend. 
+As the simulator can use three potential environments: kafka with local strimzi, Rabbitmq and IBM MQ, we have setup different docker compose configuration to run those middleware separately.
 
 ### RabbitMQ running the application in dev mode
 

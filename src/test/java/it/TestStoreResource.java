@@ -7,8 +7,8 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 
 import org.junit.jupiter.api.Test;
 
-import ibm.gse.eda.stores.api.StoreResource;
 import ibm.gse.eda.stores.domain.Store;
+import ibm.gse.eda.stores.infra.api.StoreResource;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 @QuarkusTest

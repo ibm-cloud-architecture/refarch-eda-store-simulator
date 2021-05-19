@@ -42,7 +42,7 @@ export default {
   },
   methods: {
     initialize () {
-      axios.get("/api/v1/stores").then((resp) => (this.stores = resp.data));
+      axios.get("/api/stores/v1").then((resp) => (this.stores = resp.data));
     }
   }
 };

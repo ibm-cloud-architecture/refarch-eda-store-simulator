@@ -13,7 +13,7 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package ibm.gse.eda.stores.infrastructure.kafka;
+package ibm.gse.eda.stores.infra.kafka;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,7 +35,7 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import ibm.gse.eda.stores.domain.Item;
-import ibm.gse.eda.stores.infrastructure.StoreRepository;
+import ibm.gse.eda.stores.infra.StoreRepository;
 import io.quarkus.kafka.client.serialization.JsonbSerializer;
 import io.smallrye.mutiny.Multi;
 

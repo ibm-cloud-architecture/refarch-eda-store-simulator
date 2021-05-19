@@ -1,4 +1,4 @@
-package ibm.gse.eda.stores.infrastructure;
+package ibm.gse.eda.stores.infra;
 
 import java.util.ArrayList;
 import java.util.Collection;

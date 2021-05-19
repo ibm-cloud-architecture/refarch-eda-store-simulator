@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <h3>Welcome to the store simulator</h3>
+    <h3>Welcome to the {{ title }} {{ version }}</h3>
 
    <v-card>
     <h4>Demonstration script</h4>
@@ -11,13 +11,40 @@
     </ul>
     </v-container>
    </v-card>
+   <div>
+      <p>This simulator is represented on the left in the figure below. See explanations at <a href="https://github.com/ibm-cloud-architecture/refarch-eda-store-simulator">this repository</a></p>
+      <v-img
+          alt="IBM Cloud Logo"
+          class="shrink mr-2"
+          contain
+          src="../assets/hl-view.png"
+          transition="scale-transition"
+          width="900px"
+        />
+      </div> 
   </div>
 </template>
 
 <script>
+import axios from "axios";
 // @ is an alias to /src
 
 export default {
   name: 'Home',
+  data: () => { 
+      return {
+        version: {},
+        title: "Store Item Sell Simulator"
+      }
+  },
+  created() {
+    this.initialize();
+  },
+  methods: {
+    initialize() {
+      axios.get("/api/stores/v1/version").then((resp) => (this.version = resp.data.version));
+      console.log(this.version)
+    }
+  }
 }
 </script>

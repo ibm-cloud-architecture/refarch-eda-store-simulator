@@ -1,4 +1,4 @@
-package ibm.gse.eda.stores.infrastructure.mq;
+package ibm.gse.eda.stores.infra.mq;
 
 import java.io.File;
 import java.util.List;
@@ -22,7 +22,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 
 import ibm.gse.eda.stores.domain.Item;
-import ibm.gse.eda.stores.infrastructure.StoreRepository;
+import ibm.gse.eda.stores.infra.StoreRepository;
 import io.smallrye.mutiny.Multi;
 
 @ApplicationScoped

@@ -1,4 +1,4 @@
-package ibm.gse.eda.stores.api.dto;
+package ibm.gse.eda.stores.infra.api.dto;
 
 public class SimulationControl {
     

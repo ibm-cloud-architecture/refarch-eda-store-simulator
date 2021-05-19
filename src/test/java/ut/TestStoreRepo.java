@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import ibm.gse.eda.stores.domain.Store;
-import ibm.gse.eda.stores.infrastructure.StoreRepository;
+import ibm.gse.eda.stores.infra.StoreRepository;
 import io.smallrye.mutiny.Multi;
 
 

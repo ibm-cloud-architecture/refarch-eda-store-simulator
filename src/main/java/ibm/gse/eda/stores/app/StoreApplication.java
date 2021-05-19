@@ -1,4 +1,4 @@
-package ibm.gse.eda.stores.api;
+package ibm.gse.eda.stores.app;
 
 import javax.ws.rs.core.Application;
 

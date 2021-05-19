@@ -11,8 +11,8 @@
           width="40"
         />
       </div>
-      <v-toolbar-title>EDA- Item Store Simulator - v 0.1.0 </v-toolbar-title>
-
+      <v-toolbar-title>EDA- Item Store Simulator - {{ version }}</v-toolbar-title>
+     
       <v-spacer></v-spacer>
       <v-btn to="/" text>
           <v-icon left>mdi-home</v-icon>
@@ -44,11 +44,24 @@
 </template>
 
 <script>
-
+import axios from "axios";
 export default {
   name: "App",
-  data: () => ({
-    //
-  }),
+  data: () => {
+      
+      return {
+        version: {},
+        title: process.env.VUE_APP_TITLE
+      }   
+  },
+  created() {
+    this.initialize();
+  },
+  methods: {
+    initialize() {
+      axios.get("/api/stores/v1/version").then((resp) => (this.version = resp.data.version));
+      console.log(this.version)
+    }
+  }
 };
 </script>

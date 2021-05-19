@@ -1,4 +1,4 @@
-package ibm.gse.eda.stores.infrastructure.rabbitmq;
+package ibm.gse.eda.stores.infra.rabbitmq;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ import com.rabbitmq.client.ConnectionFactory;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import ibm.gse.eda.stores.domain.Item;
-import ibm.gse.eda.stores.infrastructure.StoreRepository;
+import ibm.gse.eda.stores.infra.StoreRepository;
 import io.smallrye.mutiny.Multi;
 
 @ApplicationScoped

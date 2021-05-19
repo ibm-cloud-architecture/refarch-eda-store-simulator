@@ -5,7 +5,7 @@ import javax.inject.Inject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import ibm.gse.eda.stores.infrastructure.rabbitmq.RabbitMQItemGenerator;
+import ibm.gse.eda.stores.infra.rabbitmq.RabbitMQItemGenerator;
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest

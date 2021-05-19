@@ -69,14 +69,14 @@ export default {
   methods: {
     initialize() {
       axios
-        .get("/api/v1/stores/backends")
+        .get("/api/stores/v1/backends")
         .then((resp) => (this.backends = resp.data));
     },
     start() {
       console.log(" start with " + this.records);
       let control = { records: this.records, backend: this.backend };
       axios
-        .post("/api/v1/stores/start/", control)
+        .post("/api/stores/v1/start/", control)
         .then((resp) => (this.messages = resp.data));
     },
     resetTable() {
