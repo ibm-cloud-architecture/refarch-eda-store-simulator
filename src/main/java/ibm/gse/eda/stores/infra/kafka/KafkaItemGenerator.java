@@ -64,7 +64,7 @@ public class KafkaItemGenerator {
     @ConfigProperty(name = "kafka.producer.idempotence", defaultValue = "false")
     public boolean producerIdempotence;
 
-    @ConfigProperty(name = "kafka.security.protocol", defaultValue = "")
+    @ConfigProperty(name = "kafka.security.protocol", defaultValue = "PLAINTEXT")
     public Optional<String> kafkaSecurityProtocol;
 
     @ConfigProperty(name = "kafka.sasl.mechanism", defaultValue = "PLAIN")
@@ -73,19 +73,19 @@ public class KafkaItemGenerator {
     @ConfigProperty(name = "kafka.sasl.jaas.config", defaultValue = "")
     public Optional<String> saslJaasConfig;
 
-    @ConfigProperty(name = "kafka.ssl.trutstore.file.location", defaultValue = "")
+    @ConfigProperty(name = "kafka.ssl.trutstore.file.location", defaultValue = "/deployments/certs/server/ca.p12")
     public Optional<String> trustStoreLocation;
 
     @ConfigProperty(name = "kafka.ssl.trutstore.password", defaultValue = "")
     public Optional<String> trustStorePwd;
 
-    @ConfigProperty(name = "kafka.ssl.keystore.file.location", defaultValue = "")
+    @ConfigProperty(name = "kafka.ssl.keystore.file.location", defaultValue = "/deployments/certs/user/cuser.p12")
     public Optional<String> keyStoreLocation;
 
     @ConfigProperty(name = "kafka.ssl.keystore.password", defaultValue = "")
     public Optional<String> keyStorePwd;
 
-    @ConfigProperty(name = "kafka.ssl.protocol", defaultValue = "")
+    @ConfigProperty(name = "kafka.ssl.protocol", defaultValue = "TLSv1.2")
     public Optional<String> sslProtocol;
 
     private KafkaProducer<String, Item> kafkaProducer = null;
@@ -143,41 +143,53 @@ public class KafkaItemGenerator {
 
   
 
-    private Properties getProducerProperties() {
+    public Properties getProducerProperties() {
         Properties properties = new Properties();
         properties.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
        
-        if (!kafkaSecurityProtocol.isEmpty()) {
-            properties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, kafkaSecurityProtocol.get());
+        if (kafkaSecurityProtocol.get().contains("SASL")) {
             properties.put(SaslConfigs.SASL_JAAS_CONFIG, saslJaasConfig.get());
-            
-            if (! sslProtocol.isEmpty()) {
-                properties.put(SslConfigs.SSL_PROTOCOL_CONFIG, sslProtocol.get());
-            }
-            
             properties.put(SaslConfigs.SASL_MECHANISM, kafkaSaslMechanism.get());
+        } 
+        properties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, kafkaSecurityProtocol.get());
+          
+        if (kafkaSecurityProtocol.get().equals("SSL")) {
+            properties.put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, keyStoreLocation.get());
+            properties.put(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, keyStorePwd.get());
+            properties.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, trustStoreLocation.get());
+            properties.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, trustStorePwd.get());
+        }
+         
+        if (kafkaSecurityProtocol.get().equals("SASL_SSL")) {
+            properties.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, trustStoreLocation.get());
+            properties.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, trustStorePwd.get());
+        }
+        if (sslProtocol != null && ! sslProtocol.isEmpty()) {
+            properties.put(SslConfigs.SSL_PROTOCOL_CONFIG, sslProtocol.get());
+        }
 
-            if ("SSL".equals(kafkaSaslMechanism.get())) {
-                properties.put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, keyStoreLocation.get());
-                properties.put(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, keyStorePwd.get());
-
-            }
-
-            if (!trustStoreLocation.isEmpty()) {
-                properties.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, trustStoreLocation.get());
-                properties.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, trustStorePwd.get());
-            }
+        if (producerAcks != null && ! producerAcks.isEmpty()) {
+            properties.put(ProducerConfig.ACKS_CONFIG, producerAcks.get());
         }
 
 
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonbSerializer.class.getName());
         properties.put(ProducerConfig.CLIENT_ID_CONFIG, "StoreProducer-1");
-        properties.put(ProducerConfig.ACKS_CONFIG, producerAcks.get());
+        
         properties.put(ProducerConfig.RETRIES_CONFIG, 0);
        
         properties.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, producerIdempotence);
         properties.forEach((k, v) -> logger.info(k + " : " + v));
         return properties;
     }
+
+    public Optional<String> getTopicName() {
+        return topicName;
+    }
+
+    public String getBootstrapServers() {
+        return bootstrapServers;
+    }
+
 }

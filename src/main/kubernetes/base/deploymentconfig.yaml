@@ -5,6 +5,7 @@ metadata:
     app.openshift.io/vcs-url: https://github.com/ibm-cloud-architecture/refarch-eda-store-simulator.git
   labels:
     app.kubernetes.io/name: store-simulator
+    app: store-simulator
     app.openshift.io/runtime: quarkus
   name: store-simulator
 spec:
@@ -18,6 +19,7 @@ spec:
       labels:
         app.kubernetes.io/name: store-simulator
         app.openshift.io/runtime: quarkus
+        app: store-simulator
     spec:
       containers:
       - args:
@@ -35,40 +37,28 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-        - name: KAFKA_SSL_TRUSTSTORE_LOCATION
+        - name: KAFKA_SSL_TRUSTSTORE_FILE_LOCATION
           value: /deployments/certs/server/ca.p12
         - name: KAFKA_SSL_TRUSTSTORE_TYPE
+          value: PKCS12
+        - name: KAFKA_SSL_KEYSTORE_FILE_LOCATION
+          value: /deployments/certs/user/user.p12
+        - name: KAFKA_SSL_KEYSTORE_TYPE
           value: PKCS12
         - name: KAFKA_SECURITY_PROTOCOL
           value: SSL
         - name: KAFKA_USER
           value: tls-user
-        - name: KAFKA_BROKERS
-          value: lab-kafka-bootstrap.jb-lab.svc:9093
-        - name: MQ_CIPHER_SUITE
-          value: TLS12ORHIGHER
-        - name: USER_CERT_PATH
-          value: /deployments/certs/user/user.p12
+        - name: KAFKA_CERT_PWD
+          valueFrom:
+            secretKeyRef:
+              key: ca.password
+              name: kafka-cluster-ca-cert
         - name: USER_CERT_PWD
           valueFrom:
             secretKeyRef:
               key: user.password
               name: tls-user
-              optional: true
-        - name: KAFKA_CERT_PWD
-          valueFrom:
-            secretKeyRef:
-              key: ca.password
-              name: lab-kafka-cluster-ca-cert
-              optional: true
-        - name: KAFKA_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              key: user.password
-              name: tls-user
-              optional: true
-        - name: KAFKA_CERT_PATH
-          value: /deployments/certs/server/ca.p12
         - name: MQ_CCDT_URL
           value: /deployments/certs/mq-ccdt/mq-ccdt.json
         - name: JAVA_APP_JAR
@@ -76,6 +66,8 @@ spec:
         envFrom:
         - configMapRef:
             name: store-simulator-cm
+        - configMapRef:
+            name: kafka-topics-cm
         image: quay.io/ibmcase/eda-store-simulator
         imagePullPolicy: Always
         livenessProbe:
@@ -108,14 +100,6 @@ spec:
           name: kafka-cert
           readOnly: false
           subPath: ""
-        - mountPath: /deployments/certs/mq-ccdt
-          name: mq-ccdt-config
-          readOnly: false
-          subPath: ""
-        - mountPath: /deployments/certs/mq-tls
-          name: mq-tls-truststore
-          readOnly: false
-          subPath: ""
         - mountPath: /deployments/certs/user
           name: user-cert
           readOnly: false
@@ -126,19 +110,9 @@ spec:
         secret:
           defaultMode: 384
           optional: true
-          secretName: lab-kafka-cluster-ca-cert
-      - name: mq-tls-truststore
-        secret:
-          defaultMode: 384
-          optional: false
-          secretName: store-simulator-mq-truststore
+          secretName: kafka-cluster-ca-cert
       - name: user-cert
         secret:
           defaultMode: 384
           optional: true
           secretName: tls-user
-      - name: mq-ccdt-config
-        configMap:
-          defaultMode: 384
-          optional: false
-          name: mq-ccdt-config

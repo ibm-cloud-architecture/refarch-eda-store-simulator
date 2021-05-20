@@ -4,16 +4,29 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
 
 import org.junit.jupiter.api.Test;
 
+import ibm.gse.eda.stores.domain.Item;
 import ibm.gse.eda.stores.domain.Store;
 import ibm.gse.eda.stores.infra.api.StoreResource;
+import ibm.gse.eda.stores.infra.kafka.KafkaItemGenerator;
+import ibm.gse.eda.stores.infra.rabbitmq.RabbitMQItemGenerator;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.junit.mockito.InjectMock;
+
 @QuarkusTest
 @TestHTTPEndpoint(StoreResource.class)
-public class TestStoreResource {
+public class TestStoreResource   {
+
+    @InjectMock
+    RabbitMQItemGenerator rabbitMQGenerator;
+    @InjectMock
+    KafkaItemGenerator kafkaItemGenerator;
 
     @Test
     public void shouldHaveStore_1_fromGetStoreNames(){
@@ -32,14 +45,20 @@ public class TestStoreResource {
 
     /**
      * The following code need rabbitmq running with docker compose.
-     */
+    */
     @Test
     public void shouldStartSendingOneMessageToRabbitMQ(){
+        when(rabbitMQGenerator.connectToQueueManager()).thenReturn(true);
+        //when(rabbitMQGenerator.closeChannel()).thenReturn(null);
+        when(rabbitMQGenerator.start(1)).thenReturn(new ArrayList<Item>());
         given().when().post("/start/rmq/1").then().statusCode(200);
     }
 
+    
     @Test
     public void shouldStartSendingOneMessageToKafka(){
+        when(kafkaItemGenerator.start(1)).thenReturn(new ArrayList<Item>());
         given().when().post("/start/kafka/1").then().statusCode(200);
     }
+     
 }
