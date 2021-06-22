@@ -1,0 +1,42 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: store-simulator-source
+spec:
+  type: git
+  params:
+    - name: url
+      value: https://github.com/jbcodeforce/refarch-eda-store-simulator
+    - name: revision
+      value: master
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: store-simulator-image-native
+spec:
+  type: image
+  params:
+    - name: url
+      value: quay.io/ibmcase/eda-store-simulator:native
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: store-simulator-image-jvm
+spec:
+  type: image
+  params:
+    - name: url
+      value: quay.io/ibmcase/eda-store-simulator
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: m2-cache
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 8Gi
