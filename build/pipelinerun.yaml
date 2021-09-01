@@ -21,4 +21,4 @@ spec:
   - name: GOALS
     value: clean package -Dui.deps -Dui.dev -DskipTests
   - name: IMAGE_NAME
-    value: image-registry.openshift-image-registry.svc:5000/rt-inventory-pipe/eda-store-simulator
+    value: quay.io/boyerje/eda-store-simulator
