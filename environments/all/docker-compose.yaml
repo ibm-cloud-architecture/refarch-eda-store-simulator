@@ -12,7 +12,7 @@ services:
     volumes:
       - ./enable_plugins:/etc/rabbitmq/enabled_plugins
   zookeeper:
-    image: quay.io/strimzi/kafka:latest-kafka-2.7.0
+    image: quay.io/strimzi/kafka:latest-kafka-2.8.1
     hostname: zookeeper
     command: [
         "sh", "-c",
@@ -30,7 +30,7 @@ services:
       - ./data/zookeeper/data:/data
       - ./data/zookeeper/datalog:/datalog
   kafka:
-    image: quay.io/strimzi/kafka:latest-kafka-2.7.0
+    image: quay.io/strimzi/kafka:latest-kafka-2.8.1
     container_name: kafka
     command: [
       "sh", "-c",

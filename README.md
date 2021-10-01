@@ -1,18 +1,20 @@
 # Store sale event producer simulator
 
-The store sales simulator application aims to demonstrate end to end real time inventory solution. It supports the following capabilities:
+The store sales simulator application aims to demonstrate an end-to-end new real-time inventory solution based on event-driven architecture
+and data streaming capabilities. It supports the following features:
 
 * Expose a simple user interface to simulate store selling items which are sent to Queue or Topic. 
 * Randomly create item sale events ( includes restocks) and send them to Kafka or RabbitMQ or IBM MQ depending of the application configuration.
-* Integrate with external services to query the item inventory and store inventory interactive queries supported by Kafka Streams. (See project: [refarch-eda-item-inventory](https://github.com/ibm-cloud-architecture/refarch-eda-item-inventory))
+* Integrate with external services to query the item inventory and store inventory interactive queries supported by Kafka Streams. 
+(See projects: [refarch-eda-item-inventory](https://github.com/ibm-cloud-architecture/refarch-eda-item-inventory) and [refarch-eda-store-inventory](https://github.com/ibm-cloud-architecture/refarch-eda-store-inventory))
 
-This implementation is done with Java 11 and [Quarkus](https://quarkus.io) with the AMQP reactive messaging extension to send messages to RabbitMQ, 
+This implementation is done with Java 11 and [Quarkus](https://quarkus.io) 2.2.x with the AMQP reactive messaging extension to send messages to RabbitMQ, 
 or with the Kafka producer API to send message directly to Kafka, or using JMS to send to IBM MQ. 
 
-The end to end solution is documented in a separate deep dive lab in [this article](https://ibm-cloud-architecture.github.io/refarch-eda/scenarios/realtime-inventory/).
+The end-to-end solution demonstration is documented in a separate deep dive lab in [this article](https://ibm-cloud-architecture.github.io/refarch-eda/scenarios/realtime-inventory/).
 
-With this repository you can validate sending message to the different backends from a single User interface. All the images are in `quay.io` registry, but
-for development and access to docker compose and other scripts clone this repository. 
+With this repository, you can validate sending message to the different back-ends using a single User Interface. All the images are in `quay.io` registry, but
+for development purpose we recommend to clone this repository. 
 
 ```shell
 git clone https://github.com/ibm-cloud-architecture/refarch-eda-store-simulator
@@ -23,12 +25,13 @@ Updates:
 * 01/06/2021: Quarkus 1.10.5- Rabbit MQ 3.8 on local docker deployment, and Kafka 2.6. IBM MQ 9.2.
 * 04/01/2021: Quarkus 1.13, Add Kustomize for gitops deployment
 * 05/04/2021: Quarkus 1.13.2, Simplify environment folder, add codeql-analysis git workflow.
+* 09/30/2021: Quarkus 2.2.3: add view of existing inventory
 
-## Build the application
+## Build the application locally
 
 The docker image for this application is already available on [quay.io registry](https://quay.io/ibmcase/eda-store-simulator).
 
-The buildAll.sh scripts runs Maven packaging and docker build and push. So we need to change this script to push to your own registry.
+The `buildAll.sh` scripts runs Maven packaging and docker build and push the image to `quay.io`. So you need to change this script to push to your own registry.
 
 ```shell
 docker login quay.io -u ...
@@ -111,7 +114,7 @@ Verify messages are sent.
 
 ### For Kafka
 
-First be sure the items topic is created, if not running the following command will add it:
+First be sure the `items` topic is created, if not, run the following command:
 
 ```shell
 ./scripts/createTopics.sh
@@ -132,7 +135,7 @@ sending to items item {"id":5,"price":44.12,"quantity":4,"sku":"Item_4","storeNa
 Or using the following command to consumer all the messages from the `items` topic:
 
 ```shell
-docker run -ti --network kafkanet strimzi/kafka:latest-kafka-2.6.0 bash -c "/opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server kafka:9092 --topic items --from-beginning"
+docker run -ti strimzi/kafka:latest-kafka-2.8.0 bash -c "/opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server kafka:29092 --topic items --from-beginning"
 ```
 
 ## Development mode - run locally
@@ -155,12 +158,36 @@ Access the API via: [http://localhost:8080/swagger-ui/#/](http://localhost:8080/
 
 In the Queues page, see the content of the `items` queue, and use the 'get messages' to see the queue content.
 
+### User Interface development
+
 The user interface is done in Vue.js under the webapp folder, so it is possible via proxy configuration see ([vue.config.js file](https://github.com/ibm-cloud-architecture/refarch-eda-store-simulator/blob/master/webapp/vue.config.js)) to start `yarn serve` and access the UI connected to the simulator backend.
+
+We recommend use docker to run nodejs to avoid potential conflicts with your local deployment. So the first time you start the node container do the following:
+
+The following was lastly tested on 9/30/2021 so migrating to vue 5.0.0 and nodejs v16.10.0
+
+```sh
+# Under webapp folder
+docker run -v $(pwd):/home -ti node bash
+# In the bash shell
+yarn global add @vue/cli
+# May be needed to updated the vue app with
+vue upgrade --next
+# in another terminal
+# get the container id
+docker ps
+# commit the new image. Change ibmcase to your own docker or quay.io name
+docker commit <container_id> quay.io/ibmcase/vue_node
+# Verify
+docker images
+```
+
+From the image created above, or reusing our image (quay.io/ibmcase/vue_node) starts the image by exposing the port 4545
 
 ```shell
 # under webapp folder
-# Project setup
-yarn install
+docker run -v $(pwd):/home -ti -p 4545:4545 quay.io/ibmcase/vue_node bash
+# Under /home 
 # Compiles and hot-reloads for development
 yarn serve
 ```
@@ -187,7 +214,7 @@ yarn serve
 
 To work on the UI development and test go the [http://localhost:4545/#/](http://localhost:4545/#/) to see the UI. 
 
-To work on the backend API test: []()
+To work on the backend API test using swagger UI: []()
 
 ### IBM MQ only for development
 
@@ -242,16 +269,22 @@ Each integration is done in a separate class under the infrastructure package:
 
 ## Deploy and run on OpenShift
 
-To package the app as docker images with a build on OpenShift, using the source to image approach, by running the following command:
+To package the app as docker images with a build performed within the OpenShift cluster, 
+we can use the source to image approach, by running the following command:
 
 ```shell
 ./mvnw clean package -Dui.deps -Dui.dev -Dquarkus.container-image.build=true -Dquarkus.container-image.group=ibmcase -Dquarkus.container-image.tag=1.0.0 -Dquarkus.kubernetes.deploy=true -DskipTests
 ```
 
-If you want to use Kustomize the `src/main/kubernetes` folder includes the necessary yaml manifests to deploy to an OpenShift cluster using `Kustomize`:
+As an alternate to deploy this application, we can use our Kustomize declarations from the `src/main/kubernetes` folder.
+
+The configmap 
 
 ```sh
+# log to OpenShift
 oc login ....
+# Create a new project
 oc new-project test-store-simul
-oc apply -k src/main/kubernetes
+# deploy
+oc apply -k src/main/kubernetes/store-simulator
 ```
