@@ -6,14 +6,14 @@ spec:
   pipelineRef:
     name: build-quarkus-app
   workspaces:
-  - name: build-ws
+  - name: share
     persistentvolumeclaim:
       claimName: m2-cache
   - name: maven-settings
     emptyDir: {}
   params:
   - name: repo-url
-    value: https://github.com/jbcodeforce/refarch-eda-store-simulator
+    value: https://github.com/ibm-cloud-architecture/refarch-eda-store-simulator
   - name: revision
     value: master
   - name: DOCKERFILE
