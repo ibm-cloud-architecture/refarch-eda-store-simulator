@@ -14,8 +14,8 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-    <quarkus.platform.version>2.2.3.Final</quarkus.platform.version>
-
+    <quarkus.platform.version>2.3.1.Final</quarkus.platform.version>
+    <quarkus-plugin.version>2.3.1.Final</quarkus-plugin.version>
     <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
     <version.frontend-maven-plugin>1.12.0</version.frontend-maven-plugin>
     <version.resources-plugin>3.2.0</version.resources-plugin>
@@ -152,6 +152,8 @@
         <version>${version.frontend-maven-plugin}</version>
         <configuration>
           <workingDirectory>webapp</workingDirectory>
+          <nodeVersion>v14.16.1</nodeVersion>
+          <yarnVersion>v1.22.5</yarnVersion>
         </configuration>
       </plugin>
       <plugin>

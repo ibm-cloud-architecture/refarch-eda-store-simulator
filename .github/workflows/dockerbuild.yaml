@@ -62,7 +62,7 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 11
-    - name: Build the SpringContainerMS docker image
+    - name: Build the docker image
       id: build-container-image
       run: |
         IMAGE_NAME="${DOCKER_REG}/${DOCKER_R}/${DOCKER_I}"

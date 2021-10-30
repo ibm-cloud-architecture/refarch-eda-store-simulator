@@ -59,10 +59,10 @@ The user interface is done in Vue.js under the webapp folder, so it is possible 
 see ([vue.config.js file](https://github.com/ibm-cloud-architecture/refarch-eda-store-simulator/blob/master/webapp/vue.config.js)) 
 to start `yarn serve` and access the UI connected to the simulator backend.
 
-We recommend use docker to run nodejs to avoid potential conflicts with your local deployment. 
+We recommend using docker to run nodejs to avoid potential conflicts with your local deployment. 
 So the first time you start the node container do the following:
 
-The following was lastly tested on 9/30/2021 so migrating to vue 4.5.14 and nodejs v14.15.0
+The following was lastly tested on 9/30/2021 so migrating to vuejs 4.5.14 and nodejs v14.15.0
 
 ```sh
 # Under webapp folder
