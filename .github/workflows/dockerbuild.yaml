@@ -69,6 +69,8 @@ jobs:
         docker login -u ${DOCKER_U} -p ${DOCKER_P} ${DOCKER_REG}
 
         echo "Build and push the docker image"
+        cd ${WORKDIR}/webapp
+        yarn install
         cd ${WORKDIR}
         mvn package -DskipTests -Dui.dev -Dui.deps
         docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:latest
@@ -79,6 +81,7 @@ jobs:
         DOCKER_R: ${{ secrets.DOCKER_REPOSITORY }}
         DOCKER_I: ${{ secrets.DOCKER_IMAGE_NAME }}
         DOCKER_REG: ${{ secrets.DOCKER_REGISTRY }}
+        NODE_ENV: development
         WORKDIR: .
         DOCKERFILE: src/main/docker/Dockerfile.jvm
         IMAGE_TAG: ${{ steps.bump-version-action.outputs.new_tag }}
