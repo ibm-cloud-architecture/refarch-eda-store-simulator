@@ -32,12 +32,13 @@ Updates:
 * 04/01/2021: Quarkus 1.13, Add Kustomize for gitops deployment
 * 05/04/2021: Quarkus 1.13.2, Simplify environment folder, add codeql-analysis git workflow.
 * 09/30/2021: Quarkus 2.2.3: add view of existing inventory
+* 11/02/2021: Quarkus 2.3.1, + add view with controlled items sell scenario
 
 ## Build the application locally
 
 The docker image for this application is already available on quay.io registry as [ibmcase/eda-store-simulator](https://quay.io/ibmcase/eda-store-simulator).
 
-The `buildAll.sh` scripts runs Maven packaging which include the vuejs app build (from the webapp folder), docker build and push the image to `quay.io`. 
+The `buildAll.sh` scripts runs Maven packaging which include the vuejs app build (from the frontend folder), docker build and push the image to `quay.io`. 
 You may need to change this script to push to your own registry.
 
 ```shell
@@ -45,27 +46,41 @@ docker login quay.io -u ...
 ./scripts/buildAll.sh 
 ```
 
-To only build the jar file do:
+```shell
+# under this project
+mvn package
+```
+
+To build backend and frontend separately:
 
 ```sh
-./mvnw clean package -Dui.deps -Dui.dev -DskipTests
-# Without UI
-./mvnw clean package -DskipTests
+mvn -U clean install -pl :store-simulator-frontend
+mvn -U clean install -pl :store-simulator-backend -DskipTests
 ```
 
 ### User Interface development
 
-The user interface is done in Vue.js under the webapp folder, so it is possible via proxy configuration 
-see ([vue.config.js file](https://github.com/ibm-cloud-architecture/refarch-eda-store-simulator/blob/master/webapp/vue.config.js)) 
+The user interface is done in Vue.js under the frontend folder, so it is possible via proxy configuration 
+see ([vue.config.js file](https://github.com/ibm-cloud-architecture/refarch-eda-store-simulator/blob/master/frontend/vue.config.js)) 
 to start `yarn serve` and access the UI connected to the simulator backend.
 
-We recommend using docker to run nodejs to avoid potential conflicts with your local deployment. 
+If you have the last release of nvm and node:
+
+```sh
+# under the frontend folder
+nvm use node
+yarn serve
+# Go to http://localhost:4545/
+```
+
+But if you do not want any conflict with your node environment, we recommend using 
+docker to run nodejs. 
 So the first time you start the node container do the following:
 
 The following was lastly tested on 9/30/2021 so migrating to vuejs 4.5.14 and nodejs v14.15.0
 
 ```sh
-# Under webapp folder
+# Under frontend folder
 docker run -v $(pwd):/home -ti node bash
 # In the bash shell
 yarn global add @vue/cli
@@ -83,7 +98,7 @@ docker images
 From the image created above, or reusing our image (quay.io/ibmcase/vue_node) starts the image by exposing the port 4545
 
 ```shell
-# under webapp folder
+# under frontend folder
 docker run -v $(pwd):/home -ti -p 4545:4545 quay.io/ibmcase/vue_node bash
 # Under /home 
 # Compiles and hot-reloads for development
@@ -92,7 +107,8 @@ yarn serve
 
 Go the [http://localhost:4545/#/](http://localhost:4545/#/) to see the UI. 
 
-Any development under the webapp will be automatically visible in the browser and any change to the Quarkus app are also reflected to make the end to end development very efficient.
+Any development under the frontend will be automatically visible in the browser and any changes to the Quarkus app 
+are also reflected to make the end to end development very efficient.
 
 
 ### Potential build issues
@@ -200,7 +216,7 @@ docker run -ti strimzi/kafka:latest-kafka-2.8.0 bash -c "/opt/kafka/bin/kafka-co
 
 When developing the application, you may want to test against only one backend. 
 As the simulator can use three potential environments: kafka with local strimzi, Rabbitmq and IBM MQ, 
-we have setup different docker compose configuration to run those middleware separately.
+we have setup different docker compose configurations to run those middleware separately.
 
 ### RabbitMQ alone, running the application in dev mode
 
@@ -211,7 +227,7 @@ Go under the `environments/rabbitmq` folder and start the two docker containers:
 docker-compose docker-compose up
 # Start quarkus
 quarkus dev
-# If needed in the webapp folder, start the UI
+# If needed in the frontend folder, start the UI
 yarn serve
 ```
 
@@ -228,7 +244,7 @@ The compose file is under `environment/kafka` folder.
 # under environments/kafka folder
 docker-compose up -d
 
-# Under webapp folder
+# Under frontend folder
 # Compiles and hot-reloads for development
 yarn serve
 
@@ -252,7 +268,7 @@ Then same commands as above.
 ### Packaging the UI and Quarkus app
 
 ```shell
-# under webapp
+# under frontend
 yarn build
 # under root folder
 mvn package
