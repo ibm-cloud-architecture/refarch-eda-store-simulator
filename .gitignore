@@ -3,7 +3,7 @@
 .project
 .classpath
 .settings/
-bin/
+
 
 # IntelliJ
 .idea
@@ -25,13 +25,15 @@ bin/
 *.orig
 *.rej
 
-# Maven
+
 environments/kafka/data/
 environments/all/data/
 environments/rabbitma/data/
+# Maven
 backend/target/
 backend/pom.xml.tag
 backend/pom.xml.releaseBackup
 backend/pom.xml.versionsBackup
 release.properties
 frontend/node_modules/
+frontend/dist/

@@ -1,6 +1,7 @@
 <template>
-  <v-card>
-    <h3>Store Simulator</h3>
+ <v-container>
+  <v-card elevation="2" tile>
+    <v-card-title>Store Simulator</v-card-title>
     <v-row align-content="center">
       <v-container>
         Current backend is: {{ backend }}
@@ -15,6 +16,7 @@
         </v-radio-group>
       </v-container>
     </v-row>
+  </v-card>
     <v-row align-content="center">
       <v-col cols="12" md="6" sm="3">
         <v-container>
@@ -57,6 +59,7 @@
       <Messages :messagesIn="messages"></Messages>
     </v-row>
   </v-card>
+ </v-container>
 </template>
 <script>
 import axios from "axios";
