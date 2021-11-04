@@ -80,8 +80,12 @@ public class MQItemGenerator {
     private JmsConnectionFactory cf = null;
     protected Jsonb jsonb = null;
 
-	public List<Item> start(int numberOfRecords) {
-        List<Item> items = storeRepository.buildItems(numberOfRecords);
+	public List<Item> start(int numberOfRecords,boolean randomIt) {
+        List<Item> items;
+        if (randomIt)
+            items = storeRepository.buildRandomItems(numberOfRecords);
+        else
+            items = storeRepository.buildControlledItems();
         try {
             jmsContext = buildJMSConnectionSession();
             producer = jmsContext.createProducer();

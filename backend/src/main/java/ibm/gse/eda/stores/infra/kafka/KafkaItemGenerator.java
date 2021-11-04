@@ -110,8 +110,12 @@ public class KafkaItemGenerator {
 
    
 
-    public List<Item> start(Integer numberOfRecords) {
-        List<Item> items = storeRepository.buildItems(numberOfRecords);
+    public List<Item> start(Integer numberOfRecords,boolean randomIt) {
+        List<Item> items;
+        if (randomIt)
+            items = storeRepository.buildRandomItems(numberOfRecords);
+        else
+            items = storeRepository.buildControlledItems();
         Multi.createFrom().items(items.stream()).subscribe().with(item -> {
             sendToKafka(item);
         }, failure -> System.out.println("Failed with " + failure.getMessage()), () -> close());

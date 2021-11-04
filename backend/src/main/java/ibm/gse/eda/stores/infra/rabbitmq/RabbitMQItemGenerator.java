@@ -54,9 +54,13 @@ public class RabbitMQItemGenerator {
 
     public RabbitMQItemGenerator(){}
 
-    public List<Item> start(int records) {
+    public List<Item> start(int numberOfRecords,boolean randomIt) {
         if (connectToQueueManager()) {
-            List<Item> items = storeRepository.buildItems(records);
+            List<Item> items;
+            if (randomIt)
+                items = storeRepository.buildRandomItems(numberOfRecords);
+            else
+                items = storeRepository.buildControlledItems();
             Multi.createFrom().items(items.stream()).subscribe().with(item -> {
                 sendMessage(item);
             }, failure -> System.out.println("Failed with " + failure.getMessage()));

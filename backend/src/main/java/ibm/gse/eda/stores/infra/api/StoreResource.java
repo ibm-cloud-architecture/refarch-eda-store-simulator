@@ -71,37 +71,60 @@ public class StoreResource {
     public Multi<Item> startSendingMessage( SimulationControl control) {
         control.backend = control.backend.toUpperCase();
         if (RABBITMQ.equals(control.backend)) {
-            return startSendingMessageToRMQ(control.records);
+            return startSendingMessageToRMQ(control.records,true);
         } else if (KAFKA.equals(control.backend)) {
-            return startSendingMessageToKafka(control.records);
+            return startSendingMessageToKafka(control.records,true);
          } else if (IBMMQ.equals(control.backend)) {
-            return startSendingMessageToMQ(control.records);
+            return startSendingMessageToMQ(control.records,true);
          }
          return Multi.createFrom().empty();
-        }
+    }
         
+    @POST
+    @Path("/startControlled/")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Multi<Item> startSendingControlledMessage( SimulationControl control) {
+        control.backend = control.backend.toUpperCase();
+        if (RABBITMQ.equals(control.backend)) {
+            return startSendingMessageToRMQ(control.records,false);
+        } else if (KAFKA.equals(control.backend)) {
+            return startSendingMessageToKafka(control.records,false);
+         } else if (IBMMQ.equals(control.backend)) {
+            return startSendingMessageToMQ(control.records,false);
+         }
+         return Multi.createFrom().empty();
+    }
 
     @POST
     @Path("/start/rmq/{records}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Multi<Item> startSendingMessageToRMQ(@PathParam final int records) {
-            return Multi.createFrom().items(rabbitMQGenerator.start(records).stream()); 
+    public Multi<Item> startSendingMessageToRMQOperation(@PathParam final int records){
+        return startSendingMessageToRMQ(records,true);
+    }
+
+    public Multi<Item> startSendingMessageToRMQ(@PathParam final int records,boolean randomIt) {
+            return Multi.createFrom().items(rabbitMQGenerator.start(records,randomIt).stream()); 
              
     }
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/start/kafka/{records}")
-    public  Multi<Item>  startSendingMessageToKafka(@PathParam final int records){
-        return Multi.createFrom().items(kafkaGenerator.start(records).stream());
+    public Multi<Item> startSendingMessageToKafkaOperation(@PathParam final int records){
+        return startSendingMessageToKafka(records,true);
+    }
+
+    public  Multi<Item>  startSendingMessageToKafka(@PathParam final int records,boolean randomIt){
+        return Multi.createFrom().items(kafkaGenerator.start(records,randomIt).stream());
        
     }
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/start/mq/{records}")
-    public  Multi<Item>  startSendingMessageToMQ(@PathParam final int records){
-        return Multi.createFrom().items(mqGenerator.start(records).stream());
+    public  Multi<Item>  startSendingMessageToMQ(@PathParam final int records,boolean randomIt){
+        return Multi.createFrom().items(mqGenerator.start(records,randomIt).stream());
        
     }
 }

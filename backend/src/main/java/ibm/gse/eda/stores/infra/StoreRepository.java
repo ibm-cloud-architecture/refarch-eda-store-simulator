@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.inject.Singleton;
 
@@ -14,6 +16,7 @@ import io.smallrye.mutiny.Multi;
 
 @Singleton
 public class StoreRepository  {
+    static Logger logger = Logger.getLogger("StoreRepository");
     
     static HashMap<String,Store> stores =new HashMap<String,Store>();
 
@@ -43,11 +46,24 @@ public class StoreRepository  {
         return stores.keySet();
     }
 
-    public List<Item> buildItems(int nbItem) {
+    public List<Item> buildRandomItems(int nbItem) {
         List<Item> items = new ArrayList<Item>();
         for (int i = 0; i < nbItem; i++) {
             items.add(Item.buildRandomItem(i,getStoreNames()));
+            logger.log(Level.FINE,items.toString());
         }
+        return items;
+    }
+
+    public List<Item>  buildControlledItems() {
+        List<Item> items = new ArrayList<Item>();
+        items.add(new Item("Store_1","Item_1",Item.RESTOCK,10,30));
+        items.add(new Item("Store_1","Item_2",Item.RESTOCK,5,20));
+        items.add(new Item("Store_1","Item_3",Item.RESTOCK,15,10));
+        items.add(new Item("Store_2","Item_1",Item.RESTOCK,10,30));
+        items.add(new Item("Store_2","Item_2",Item.RESTOCK,10,20));
+        items.add(new Item("Store_2","Item_3",Item.RESTOCK,20,10));
+        logger.log(Level.FINE,"Build controlledItems");
         return items;
     }
 }
