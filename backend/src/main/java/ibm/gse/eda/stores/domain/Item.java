@@ -31,6 +31,16 @@ public class Item {
         public Item() {
         }
 
+        public Item(int id,String store, String sku, String type, int quantity, double price) {
+                this.id = id;
+                this.storeName = store;
+                this.sku = sku;
+                this.type = type;
+                this.quantity = quantity;
+                this.price = price;
+                this.timestamp = LocalDateTime.now().toString();
+        }
+
         public Item(String store, String sku, String type, int quantity, double price) {
                 this.storeName = store;
                 this.sku = sku;

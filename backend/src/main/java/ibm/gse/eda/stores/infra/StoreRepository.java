@@ -57,12 +57,15 @@ public class StoreRepository  {
 
     public List<Item>  buildControlledItems() {
         List<Item> items = new ArrayList<Item>();
-        items.add(new Item("Store_1","Item_1",Item.RESTOCK,10,30));
-        items.add(new Item("Store_1","Item_2",Item.RESTOCK,5,20));
-        items.add(new Item("Store_1","Item_3",Item.RESTOCK,15,10));
-        items.add(new Item("Store_2","Item_1",Item.RESTOCK,10,30));
-        items.add(new Item("Store_2","Item_2",Item.RESTOCK,10,20));
-        items.add(new Item("Store_2","Item_3",Item.RESTOCK,20,10));
+        items.add(new Item(1,"Store_1","Item_1",Item.RESTOCK,10,30));
+        items.add(new Item(2,"Store_1","Item_2",Item.RESTOCK,5,20));
+        items.add(new Item(3,"Store_1","Item_3",Item.RESTOCK,15,10));
+        items.add(new Item(4,"Store_2","Item_1",Item.RESTOCK,10,30));
+        items.add(new Item(5,"Store_1","Item_2",Item.SALE,5,20));
+        items.add(new Item(6,"Store_1","Item_3",Item.SALE,5,10));
+        items.add(new Item(7,"Store_3","Item_1",Item.RESTOCK,10,30));
+        items.add(new Item(8,"Store_4","Item_1",Item.RESTOCK,10,30));
+        items.add(new Item(9,"Store_5","Item_1",Item.RESTOCK,10,30));
         logger.log(Level.FINE,"Build controlledItems");
         return items;
     }

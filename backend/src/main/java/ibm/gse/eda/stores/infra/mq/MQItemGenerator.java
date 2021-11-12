@@ -92,7 +92,7 @@ public class MQItemGenerator {
 
             Multi.createFrom().items(items.stream()).subscribe().with(item -> {
                 sendToMQ(item);
-            }, failure -> System.out.println("Failed with " + failure.getMessage()));
+            }, failure -> logger.error("Failed with " + failure.getMessage()));
         } catch (Exception e) {
             if (e != null) {
               if (e instanceof JMSException) {
@@ -112,9 +112,9 @@ public class MQItemGenerator {
   private static void processJMSException(JMSException jmsex) {
       logger.info(jmsex.getMessage());
       Throwable innerException = jmsex.getLinkedException();
-      logger.info("Exception is: " + jmsex);
+      logger.error("Exception is: " + jmsex);
       if (innerException != null) {
-          logger.info("Inner exception(s):");
+          logger.error("Inner exception(s):");
       }
       while (innerException != null) {
           logger.error(innerException.getMessage());
@@ -124,10 +124,15 @@ public class MQItemGenerator {
   }
 
     private void sendToMQ(Item item) {
+      try { 
         String msg = parser.toJson(item);
-        logger.info("sent to MQ:" + msg);
         TextMessage message = jmsContext.createTextMessage(msg);
         producer.send(destination, message);
+        logger.info("sent to MQ:" + msg);
+      } catch( Exception e) {
+        e.printStackTrace();
+      }
+        
     }
 
     private String validateCcdtFile(){
@@ -179,6 +184,7 @@ public class MQItemGenerator {
         // Create JMS objects
         jmsContext = cf.createContext();
         destination = jmsContext.createQueue("queue:///" + this.mqQueueName);
+        logger.info(cf.toString());
         return jmsContext;
     }
 }
