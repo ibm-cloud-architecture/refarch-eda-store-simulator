@@ -10,14 +10,15 @@
   <artifactId>store-simulator-backend</artifactId>
   <properties>
     <compiler-plugin.version>3.8.1</compiler-plugin.version>
-    <maven.compiler.release>11</maven.compiler.release>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
     <maven.compiler.parameters>true</maven.compiler.parameters>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
-    <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-    <quarkus.platform.version>2.6.2.Final</quarkus.platform.version>
+    <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
+    <quarkus.platform.version>2.6.3.Final</quarkus.platform.version>
    
     <version.resources-plugin>3.2.0</version.resources-plugin>
   </properties>
@@ -122,9 +123,8 @@
     <plugins>
       <plugin>
         <groupId>${quarkus.platform.group-id}</groupId>
-        <artifactId>${quarkus.platform.artifact-id}</artifactId>
+        <artifactId>quarkus-maven-plugin</artifactId>
         <version>${quarkus.platform.version}</version>
-        <extensions>true</extensions>
         <executions>
           <execution>
             <goals>
