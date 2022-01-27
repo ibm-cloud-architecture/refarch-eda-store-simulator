@@ -1,12 +1,15 @@
 # Store sale event producer simulator
 
-The store sales simulator application aims to demonstrate an end-to-end new real-time inventory solution based on event-driven architecture
+Updated 1/25/2022
+
+The store sales simulator application aims to demonstrate an end-to-end real-time inventory solution based on event-driven architecture
 and data streaming capabilities. It supports the following features:
 
-* Expose a simple user interface to simulate store selling items which are sent to Queue or Topic. 
+* Expose a simple user interface to simulate store selling items which are sent to Queue or Kafka Topic. 
 * Randomly create item sale events ( includes restocks) and send them to Kafka or RabbitMQ or IBM MQ depending of the application configuration.
+* Send predefined set of sale events to control the demonstration
 
-This implementation is done with Java 11 and [Quarkus](https://quarkus.io) 2.2.x with the AMQP reactive messaging extension to send messages to RabbitMQ, 
+This implementation is done with Java 11 and [Quarkus](https://quarkus.io) 2.6.3 with the AMQP reactive messaging extension to send messages to RabbitMQ, 
 or with the Kafka producer API to send message directly to Kafka, or using JMS to send to IBM MQ. 
 
 This tool is now used in different scenario:
@@ -17,7 +20,7 @@ and store inventory, see project [refarch-eda-store-inventory](https://github.co
 * Flink SQL query to compute ... see project [refarch-eda-item-inventory-flink](https://github.com/hmedney/refarch-eda-item-inventory-flink)
 * Demonstrate MQ Source to Kafka connector, see gitops solution in this repo: [store-mq-gitops](https://github.com/ibm-cloud-architecture/store-mq-gitops)
 
-Fo th Kafka Streams demo, the end-to-end solution demonstration script is in a separate deep dive lab in [this article](https://ibm-cloud-architecture.github.io/refarch-eda/scenarios/realtime-inventory/).
+For the Kafka Streams demo, the end-to-end solution demonstration script is in a separate deep dive lab described in [this article](https://ibm-cloud-architecture.github.io/refarch-eda/scenarios/realtime-inventory/).
 
 With this repository, you can validate sending message to the different back-ends using a single User Interface. All the images are in `quay.io` registry, but
 for maintenance and development purpose we recommend to clone this repository. 
