@@ -7,17 +7,17 @@
     <v-container>
     <ul>
       <li>Go to the stores view to see the existing stores we want to get the inventory from</li>
-      <li>In the simulator panel you can start to send message to a specific middleware you select. The list of middleware depends of configuration and deployment. At most you can hava Kafka, IBM MQ or Rabbit MQ.</li>
+      <li>In the simulator panel you can start to send messages to a specific middleware you select. The list of middleware depends of configuration and deployment. At most you can hava Kafka, IBM MQ or Rabbit MQ.</li>
     </ul>
     </v-container>
    </v-card>
    <div>
-      <p>This simulator is represented on the left in the figure below. See explanations at <a href="https://github.com/ibm-cloud-architecture/refarch-eda-store-simulator">this repository</a></p>
+      <p>This simulator is represented on the top left in the figure below. See project explanations in <a href="https://github.com/ibm-cloud-architecture/refarch-eda-store-simulator">the ibm-cloud-architecture/refarch-eda-store-simulator repository</a></p>
       <v-img
           alt="IBM Cloud Logo"
           class="shrink mr-2"
           contain
-          src="../assets/hl-view.png"
+          src="../assets/mq-es-demo.png"
           transition="scale-transition"
           width="900px"
         />

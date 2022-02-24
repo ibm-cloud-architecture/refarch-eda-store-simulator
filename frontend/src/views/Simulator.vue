@@ -1,11 +1,11 @@
 <template>
   <v-container>
     <v-card elevation="2" tile height=600px>
-      <v-card-title>Store Simulator</v-card-title>
+      <v-card-title>Store Simulator Controller</v-card-title>
       <v-row align-content="center">
         <v-col  class="d-flex align-center" cols="12" md="6" sm="3">
           <v-row class="ma-2">
-            Current backend is: {{ backend }}
+            Current backend(s) are: {{ backend }}
           </v-row>
           <v-row>
           <v-radio-group v-model="backend">
@@ -28,7 +28,7 @@
               <h3 class="mx-auto">Random</h3>
             </v-row>
             <v-row>
-              <p>Select the umber of records to send:</p>
+              <p>Select the number of random records to send:</p>
             </v-row>
             <v-spacer></v-spacer>
             <v-row class="mt-12">
@@ -53,7 +53,7 @@
             <h3 class="mx-auto">Controlled scenario</h3>
           </v-row>
           <v-row>
-          <p>Use this option to send predefined records - better for testing</p>
+          <p>Use this option to send predefined records - better for testing item and store inventories results</p>
           </v-row>
         </v-col>
       </v-row>

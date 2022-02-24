@@ -9,8 +9,8 @@ and data streaming capabilities. It supports the following features:
 * Randomly create item sale events ( includes restocks) and send them to Kafka or RabbitMQ or IBM MQ depending of the application configuration.
 * Send predefined set of sale events to control the demonstration
 
-This implementation is done with Java 11 and [Quarkus](https://quarkus.io) 2.6.3 with the AMQP reactive messaging extension to send messages to RabbitMQ, 
-or with the Kafka producer API to send message directly to Kafka, or using JMS to send to IBM MQ. 
+This implementation is done with Java 11 and [Quarkus](https://quarkus.io) 2.7.1 with the AMQP reactive messaging extension to send messages to RabbitMQ, 
+or with the Kafka producer API to send message directly to Kafka, or using JMS to send messages to IBM MQ. 
 
 This tool is now used in different scenario:
 
@@ -36,6 +36,7 @@ Updates:
 * 05/04/2021: Quarkus 1.13.2, Simplify environment folder, add codeql-analysis git workflow.
 * 09/30/2021: Quarkus 2.2.3: add view of existing inventory
 * 11/02/2021: Quarkus 2.3.1, + add view with controlled items sell scenario
+* 02/22/2022: Quarkus 2.7.1, change diagramm change vue@cli version, frontend-maven-plugin version
 
 ## Build the application locally
 
