@@ -31,7 +31,7 @@ environments/all/data/
 environments/rabbitma/data/
 # Maven
 backend/target/
-backend/src/main/resources/META-INF/static/
+backend/src/main/resources/META-INF/resources/static/js/
 backend/pom.xml.tag
 backend/pom.xml.releaseBackup
 backend/pom.xml.versionsBackup
