@@ -1,5 +1,7 @@
 package ibm.gse.eda.stores.infra.api;
 
+import java.util.logging.Logger;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -24,6 +26,7 @@ import io.smallrye.mutiny.Multi;
 @Path("/api/stores/v1")
 @ApplicationScoped
 public class StoreResource {
+    private static Logger logger = Logger.getLogger(StoreResource.class.getName());
     public static String RABBITMQ = "RABBITMQ";
     public static String IBMMQ = "IBMMQ";
     public static String KAFKA = "KAFKA";
@@ -70,6 +73,7 @@ public class StoreResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Multi<Item> startSendingMessage( SimulationControl control) {
         control.backend = control.backend.toUpperCase();
+        logger.info("Received in /start " + control.toString());
         if (RABBITMQ.equals(control.backend)) {
             return startSendingMessageToRMQ(control.records,true);
         } else if (KAFKA.equals(control.backend)) {
@@ -86,6 +90,7 @@ public class StoreResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Multi<Item> startSendingControlledMessage( SimulationControl control) {
         control.backend = control.backend.toUpperCase();
+        logger.info("Received in /start " + control.toString());
         if (RABBITMQ.equals(control.backend)) {
             return startSendingMessageToRMQ(control.records,false);
         } else if (KAFKA.equals(control.backend)) {

@@ -37,6 +37,7 @@ Updates:
 * 09/30/2021: Quarkus 2.2.3: add view of existing inventory
 * 11/02/2021: Quarkus 2.3.1, + add view with controlled items sell scenario
 * 02/22/2022: Quarkus 2.7.1, change diagramm change vue@cli version, frontend-maven-plugin version
+* 02/28/2022: Add JMScorrelationID as store name to send to MQ so kafka connector can use if for record key
 
 ## Build the application locally
 
@@ -189,6 +190,24 @@ And connecting to IBM MQ console [https://localhost:9443](https://localhost:9443
 ![4](docs/MQ-message.png)
 
 Verify messages are sent to the `DEV.QUEUE.1`.
+
+The producer code uses JMS and JMS TextMessage.
+
+```java
+ private void sendToMQ(Item item) {
+      try { 
+        String msg = parser.toJson(item);
+        TextMessage message = jmsContext.createTextMessage(msg);
+        message.setJMSCorrelationID(item.storeName);
+        producer.send(destination, message);
+        logger.info("sent to MQ:" + msg);
+      } catch( Exception e) {
+        e.printStackTrace();
+      }
+        
+    }
+```
+
 
 ### For Kafka
 

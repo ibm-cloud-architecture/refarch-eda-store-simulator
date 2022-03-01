@@ -6,4 +6,9 @@ public class SimulationControl {
     public int records;
 
     public SimulationControl(){}
+
+    @Override
+    public String toString() {
+        return "Backend: " + backend + " with " + records + " records";
+    }
 }

@@ -127,6 +127,7 @@ public class MQItemGenerator {
       try { 
         String msg = parser.toJson(item);
         TextMessage message = jmsContext.createTextMessage(msg);
+        message.setJMSCorrelationID(item.storeName);
         producer.send(destination, message);
         logger.info("sent to MQ:" + msg);
       } catch( Exception e) {

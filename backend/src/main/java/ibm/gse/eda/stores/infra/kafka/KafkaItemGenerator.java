@@ -123,6 +123,7 @@ public class KafkaItemGenerator {
     }
 
     private void sendToKafka(Item item) {
+        // key is the store name
         ProducerRecord<String, Item> record = new ProducerRecord<>(topicName.get(), item.storeName, item);
         logger.info("sending to "+ topicName.get() + " item " + item.toString());
         try {

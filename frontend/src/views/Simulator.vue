@@ -99,15 +99,16 @@ export default {
         .then((resp) => (this.backends = resp.data));
     },
     start() {
-      console.log(" start with " + this.records);
+      console.log(" start with " + this.records + " records to " + this.backend);
       let control = { records: this.records, backend: this.backend };
       axios
         .post("/api/stores/v1/start/", control)
         .then((resp) => (this.messages = resp.data));
     },
     startControlled() {
-      console.log(" startControlled with ");
+     
       let control = { records: this.records, backend: this.backend };
+      console.log(" startControlled with " + control);
       axios
         .post("/api/stores/v1/startControlled/",control)
         .then((resp) => (this.messages = resp.data));
