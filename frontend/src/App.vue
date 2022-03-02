@@ -59,7 +59,7 @@ export default {
   },
   methods: {
     initialize() {
-      axios.get("/api/stores/v1/version").then((resp) => (this.version = resp.data.version));
+      axios.get("/api/v1/version").then((resp) => (this.version = resp.data.version));
       console.log(this.version)
     }
   }
