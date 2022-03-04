@@ -103,7 +103,8 @@ public class MQItemGenerator {
               }
             }
         } finally {
-            jmsContext.close();
+            if (jmsContext != null)
+                  jmsContext.close();
         }
 
         return items;

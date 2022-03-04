@@ -118,7 +118,8 @@ public class KafkaItemGenerator {
             items = storeRepository.buildControlledItems();
         Multi.createFrom().items(items.stream()).subscribe().with(item -> {
             sendToKafka(item);
-        }, failure -> System.out.println("Failed with " + failure.getMessage()), () -> close());
+        }, failure -> System.out.println("Failed with " + failure.getMessage()), 
+           () -> close());
         return items;
     }
 

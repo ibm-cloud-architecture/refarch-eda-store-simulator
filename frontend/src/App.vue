@@ -11,7 +11,7 @@
           width="40"
         />
       </div>
-      <v-toolbar-title>EDA- Item Store Simulator - {{ version }}</v-toolbar-title>
+      <v-toolbar-title>EDA- Store Simulator - {{ version }}</v-toolbar-title>
      
       <v-spacer></v-spacer>
       <v-btn to="/" text>

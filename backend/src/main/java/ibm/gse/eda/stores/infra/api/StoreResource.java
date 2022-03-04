@@ -90,7 +90,7 @@ public class StoreResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Multi<Item> startSendingControlledMessage( SimulationControl control) {
         control.backend = control.backend.toUpperCase();
-        logger.info("Received in /start controlled" + control.toString());
+        logger.info("Received in /start controlled " + control.toString());
         if (RABBITMQ.equals(control.backend)) {
             return startSendingMessageToRMQ(control.records,false);
         } else if (KAFKA.equals(control.backend)) {
