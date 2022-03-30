@@ -89,7 +89,7 @@ public class StoreResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Multi<Item> startSendingControlledMessage( SimulationControl control) {
-        control.backend = control.backend.toUpperCase();
+        control.backend = control.backend.toUpperCase().trim();
         logger.info("Received in /start controlled " + control.toString());
         if (RABBITMQ.equals(control.backend)) {
             return startSendingMessageToRMQ(control.records,false);
@@ -121,6 +121,7 @@ public class StoreResource {
     }
 
     public  Multi<Item>  startSendingMessageToKafka(@PathParam final int records,boolean randomIt){
+        logger.info(Integer.toString(records));
         return Multi.createFrom().items(kafkaGenerator.start(records,randomIt).stream());
        
     }

@@ -1,16 +1,15 @@
 # Store sale event producer simulator
 
-Updated 1/25/2022
+Updated 3/29/2022
 
 The store sales simulator application aims to demonstrate an end-to-end real-time inventory solution based on event-driven architecture
 and data streaming capabilities. It supports the following features:
 
 * Expose a simple user interface to simulate store selling items which are sent to Queue or Kafka Topic. 
 * Randomly create item sale events ( includes restocks) and send them to Kafka or RabbitMQ or IBM MQ depending of the application configuration.
-* Send predefined set of sale events to control the demonstration
+* Send predefined set of sale events to have a better control of the demonstration results.
 
-This implementation is done with Java 11 and [Quarkus](https://quarkus.io) 2.7.1 with the AMQP reactive messaging extension to send messages to RabbitMQ, 
-or with the Kafka producer API to send message directly to Kafka, or using JMS to send messages to IBM MQ. 
+This implementation is done with Java 11 and [Quarkus](https://quarkus.io) 2.7.1 with the AMQP reactive messaging extension to send messages to RabbitMQ, or to Kafka, or using JMS to send messages to IBM MQ. 
 
 This tool is now used in different scenario:
 
@@ -22,8 +21,7 @@ and store inventory, see project [refarch-eda-store-inventory](https://github.co
 
 For the Kafka Streams demo, the end-to-end solution demonstration script is in a separate deep dive lab described in [this article](https://ibm-cloud-architecture.github.io/refarch-eda/scenarios/realtime-inventory/).
 
-With this repository, you can validate sending message to the different back-ends using a single User Interface. All the images are in `quay.io` registry, but
-for maintenance and development purpose we recommend to clone this repository. 
+With this repository, you can validate sending message to the different back-ends using a single User Interface. All the images are in `quay.io` registry, but for maintenance and development purpose we recommend to clone this repository. 
 
 ```shell
 git clone https://github.com/ibm-cloud-architecture/refarch-eda-store-simulator
@@ -38,6 +36,7 @@ Updates:
 * 11/02/2021: Quarkus 2.3.1, + add view with controlled items sell scenario
 * 02/22/2022: Quarkus 2.7.1, change diagramm change vue@cli version, frontend-maven-plugin version
 * 02/28/2022: Add JMScorrelationID as store name to send to MQ so kafka connector can use if for record key
+* 03/29/2022: Move Kafka producer to use reactive messaging.
 
 ## Build the application locally
 
@@ -122,6 +121,14 @@ are also reflected to make the end to end development very efficient.
 On mac the `brew install nodejs`  will get the `v0.10.48` version. We need another version, so use `nvm install v14.15.0` to get a working
 compatible version with the vue CLI used in this project.
 
+### Develop backend
+
+We use quarkus dev mode.
+
+```sh
+# under backend folder
+quarkus dev
+```
 
 ## Run the application locally
 
