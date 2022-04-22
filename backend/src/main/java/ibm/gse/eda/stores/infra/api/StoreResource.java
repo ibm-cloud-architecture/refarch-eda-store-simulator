@@ -16,6 +16,7 @@ import org.jboss.resteasy.annotations.jaxrs.PathParam;
 
 import ibm.gse.eda.stores.domain.Item;
 import ibm.gse.eda.stores.domain.Store;
+import ibm.gse.eda.stores.infra.SimulatorGenerator;
 import ibm.gse.eda.stores.infra.StoreRepository;
 import ibm.gse.eda.stores.infra.api.dto.SimulationControl;
 import ibm.gse.eda.stores.infra.kafka.KafkaItemGenerator;
@@ -75,41 +76,41 @@ public class StoreResource {
         control.backend = control.backend.toUpperCase();
         logger.info("Received in /start " + control.toString());
         if (RABBITMQ.equals(control.backend)) {
-            return startSendingMessageToRMQ(control.records,true);
+            return startSendingMessageToRMQ(control);
         } else if (KAFKA.equals(control.backend)) {
-            return startSendingMessageToKafka(control.records,true);
+            return startSendingMessageToKafka(control);
          } else if (IBMMQ.equals(control.backend)) {
-            return startSendingMessageToMQ(control.records,true);
+            return startSendingMessageToMQ(control);
          }
          return Multi.createFrom().empty();
     }
-        
+
     @POST
-    @Path("/startControlled/")
+    @Path("/stop/")
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Multi<Item> startSendingControlledMessage( SimulationControl control) {
-        control.backend = control.backend.toUpperCase().trim();
-        logger.info("Received in /start controlled " + control.toString());
+    public void stopSendingMessage( SimulationControl control) {
+        control.backend = control.backend.toUpperCase();
+        logger.info("Received in /stop " + control.toString());
         if (RABBITMQ.equals(control.backend)) {
-            return startSendingMessageToRMQ(control.records,false);
+            rabbitMQGenerator.stop();
         } else if (KAFKA.equals(control.backend)) {
-            return startSendingMessageToKafka(control.records,false);
+            kafkaGenerator.stop();
          } else if (IBMMQ.equals(control.backend)) {
-            return startSendingMessageToMQ(control.records,false);
+            mqGenerator.stop();
          }
-         return Multi.createFrom().empty();
     }
+
 
     @POST
     @Path("/start/rmq/{records}")
     @Produces(MediaType.APPLICATION_JSON)
     public Multi<Item> startSendingMessageToRMQOperation(@PathParam final int records){
-        return startSendingMessageToRMQ(records,true);
+        SimulationControl control = new SimulationControl(records,SimulatorGenerator.RANDOM);
+        return startSendingMessageToRMQ(control);
     }
 
-    public Multi<Item> startSendingMessageToRMQ(@PathParam final int records,boolean randomIt) {
-            return Multi.createFrom().items(rabbitMQGenerator.start(records,randomIt).stream()); 
+    public Multi<Item> startSendingMessageToRMQ(SimulationControl control) {
+            return Multi.createFrom().items(rabbitMQGenerator.start(control).stream()); 
              
     }
 
@@ -117,20 +118,25 @@ public class StoreResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/start/kafka/{records}")
     public Multi<Item> startSendingMessageToKafkaOperation(@PathParam final int records){
-        return startSendingMessageToKafka(records,true);
+        SimulationControl control = new SimulationControl(records,SimulatorGenerator.RANDOM);
+        return startSendingMessageToKafka(control);
     }
 
-    public  Multi<Item>  startSendingMessageToKafka(@PathParam final int records,boolean randomIt){
-        logger.info(Integer.toString(records));
-        return Multi.createFrom().items(kafkaGenerator.start(records,randomIt).stream());
-       
+    public  Multi<Item>  startSendingMessageToKafka(SimulationControl control){
+        return Multi.createFrom().items(kafkaGenerator.start(control).stream());     
     }
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/start/mq/{records}")
-    public  Multi<Item>  startSendingMessageToMQ(@PathParam final int records,boolean randomIt){
-        return Multi.createFrom().items(mqGenerator.start(records,randomIt).stream());
+    public  Multi<Item>  startSendingMessageToMQ(@PathParam final int records){
+        SimulationControl control = new SimulationControl(records, SimulatorGenerator.RANDOM);
+        return Multi.createFrom().items(mqGenerator.start(control).stream());
+       
+    }
+
+    public  Multi<Item>  startSendingMessageToMQ(SimulationControl control){
+        return Multi.createFrom().items(mqGenerator.start(control).stream());
        
     }
 }

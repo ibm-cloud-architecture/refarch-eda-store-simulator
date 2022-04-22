@@ -48,16 +48,15 @@ public class TestStoreResource   {
     */
     @Test
     public void shouldStartSendingOneMessageToRabbitMQ(){
-        when(rabbitMQGenerator.connectToQueueManager()).thenReturn(true);
-        //when(rabbitMQGenerator.closeChannel()).thenReturn(null);
-        when(rabbitMQGenerator.start(1,true)).thenReturn(new ArrayList<Item>());
+        when(rabbitMQGenerator.preProcessing()).thenReturn(true);
+        //when(rabbitMQGenerator.postProcessing()).thenReturn(null);
         given().when().post("/start/rmq/1").then().statusCode(200);
     }
 
     
     @Test
     public void shouldStartSendingOneMessageToKafka(){
-        when(kafkaItemGenerator.start(1,true)).thenReturn(new ArrayList<Item>());
+        //when(kafkaItemGenerator.start(1,true)).thenReturn(new ArrayList<Item>());
         given().when().post("/start/kafka/1").then().statusCode(200);
     }
      

@@ -45,8 +45,15 @@
                 v-model="records"
               ></v-text-field>
             </v-row>
-            
           </v-container>
+        </v-col>
+        <v-col class="mx-5" height="300px">
+          <v-row>
+          <h3 class="mx-auto">Random non stop</h3>
+          </v-row>
+          <v-row>
+          <p>Use this option to send random records continuously until you stop</p>
+          </v-row>
         </v-col>
         <v-col class="mx-5"  height="300px">
           <v-row>
@@ -58,12 +65,24 @@
         </v-col>
       </v-row>
       <v-row align-content="center">
-         <v-col class="mx-5">
+         <v-col class="mx-5" width="400px">
            <v-btn color="primary" @click="start">
                 <v-icon>mdi-restart</v-icon>
               </v-btn>
          </v-col>
-          <v-col class="mx-5"> 
+         <v-col class="mx-5" width="400px"> 
+           <v-col> 
+            <v-btn color="secondary" @click="startRandom">
+              <v-icon>mdi-restart</v-icon>
+            </v-btn>
+           </v-col>
+           <v-col> 
+            <v-btn color="secondary" @click="stop">
+              <v-icon>mdi-stop</v-icon>
+            </v-btn>
+           </v-col>
+          </v-col>
+          <v-col class="mx-5" width="400px"> 
             <v-btn color="primary" @click="startControlled">
               <v-icon>mdi-run</v-icon>
             </v-btn>
@@ -100,17 +119,29 @@ export default {
     },
     start() {
       console.log(" start with " + this.records + " records to " + this.backend);
-      let control = { records: this.records, backend: this.backend };
+      let control = { records: this.records, backend: this.backend, type: "randomMax" };
       axios
         .post("/api/stores/v1/start/", control)
         .then((resp) => (this.messages = resp.data));
     },
     startControlled() {
      
-      let control = { records: this.records, backend: this.backend };
+      let control = { records: this.records, backend: this.backend, type: "controlled" };
       console.log(" startControlled with " + control);
       axios
-        .post("/api/stores/v1/startControlled/",control)
+        .post("/api/stores/v1/start/",control)
+        .then((resp) => (this.messages = resp.data));
+    },
+    startRandom() {
+      let control = { records: this.records, backend: this.backend, type: "random" };
+      axios
+        .post("/api/stores/v1/start/", control)
+        .then((resp) => (this.messages = resp.data));
+    },
+    stop() {
+      let control = { records: this.records, backend: this.backend, type: "stop" };
+      axios
+        .post("/api/stores/v1/stop/", control)
         .then((resp) => (this.messages = resp.data));
     },
     resetTable() {

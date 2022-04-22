@@ -18,11 +18,12 @@ import com.rabbitmq.client.ConnectionFactory;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import ibm.gse.eda.stores.domain.Item;
+import ibm.gse.eda.stores.infra.SimulatorGenerator;
 import ibm.gse.eda.stores.infra.StoreRepository;
 import io.smallrye.mutiny.Multi;
 
 @ApplicationScoped
-public class RabbitMQItemGenerator {
+public class RabbitMQItemGenerator extends SimulatorGenerator{
 
     private static Logger logger = Logger.getLogger(RabbitMQItemGenerator.class.getName());
 
@@ -44,8 +45,6 @@ public class RabbitMQItemGenerator {
     @ConfigProperty(name = "amqp.virtualHost")
     public String virtualHost;
    
-    @Inject
-    public StoreRepository storeRepository;
 
     private Channel channel;
     private Connection connection;
@@ -53,22 +52,6 @@ public class RabbitMQItemGenerator {
     private Jsonb parser = JsonbBuilder.create();
 
     public RabbitMQItemGenerator(){}
-
-    public List<Item> start(int numberOfRecords,boolean randomIt) {
-        if (connectToQueueManager()) {
-            List<Item> items;
-            if (randomIt)
-                items = storeRepository.buildRandomItems(numberOfRecords);
-            else
-                items = storeRepository.buildControlledItems();
-            Multi.createFrom().items(items.stream()).subscribe().with(item -> {
-                sendMessage(item);
-            }, failure -> System.out.println("Failed with " + failure.getMessage()));
-            closeChannel();
-            return items;
-        }
-        return new ArrayList<Item>();
-    }
 
     public void sendMessage(Item item) {
         try {
@@ -80,7 +63,8 @@ public class RabbitMQItemGenerator {
         }
     }
 
-    public boolean connectToQueueManager() {
+    @Override
+    public boolean preProcessing() {
         this.factory = new ConnectionFactory();
         this.factory.setHost(hostname);
         this.factory.setPort(port);
@@ -98,7 +82,8 @@ public class RabbitMQItemGenerator {
         return true;
     }
 
-    private void closeChannel() {
+    @Override
+    public void postProcessing() {
         try {
             this.channel.close();
         } catch (IOException | TimeoutException e) {

@@ -1,6 +1,6 @@
 # Store sale event producer simulator
 
-Updated 3/29/2022
+Updated 4/20/2022
 
 The store sales simulator application aims to demonstrate an end-to-end real-time inventory solution based on event-driven architecture
 and data streaming capabilities. It supports the following features:
@@ -11,7 +11,7 @@ and data streaming capabilities. It supports the following features:
 
 This implementation is done with Java 11 and [Quarkus](https://quarkus.io) 2.7.1 with the AMQP reactive messaging extension to send messages to RabbitMQ, or to Kafka, or using JMS to send messages to IBM MQ. 
 
-This tool is now used in different scenario:
+This tool is now used in different scenarios:
 
 * Integrated with Kafka Streams agents to build item inventory cross stores, see
 project [refarch-eda-item-inventory](https://github.com/ibm-cloud-architecture/refarch-eda-item-inventory) 
@@ -37,6 +37,7 @@ Updates:
 * 02/22/2022: Quarkus 2.7.1, change diagramm change vue@cli version, frontend-maven-plugin version
 * 02/28/2022: Add JMScorrelationID as store name to send to MQ so kafka connector can use if for record key
 * 03/29/2022: Move Kafka producer to use reactive messaging.
+* 04/20/2022: Add close button on messages window.
 
 ## Build the application locally
 
@@ -64,7 +65,7 @@ mvn -U clean install -pl :store-simulator-backend -DskipTests
 
 ### User Interface development
 
-The user interface is done in Vue.js under the frontend folder, so it is possible via proxy configuration 
+The user interface is done in Vue.js under the `frontend` folder, so it is possible via proxy configuration 
 see ([vue.config.js file](https://github.com/ibm-cloud-architecture/refarch-eda-store-simulator/blob/master/frontend/vue.config.js)) 
 to start `yarn serve` and access the UI connected to the simulator backend.
 

@@ -26,7 +26,9 @@ import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Message;
 
 import ibm.gse.eda.stores.domain.Item;
+import ibm.gse.eda.stores.infra.SimulatorGenerator;
 import ibm.gse.eda.stores.infra.StoreRepository;
+import ibm.gse.eda.stores.infra.api.dto.SimulationControl;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.reactive.messaging.MutinyEmitter;
 import io.smallrye.reactive.messaging.kafka.api.OutgoingKafkaRecordMetadata;
@@ -38,34 +40,19 @@ import io.smallrye.reactive.messaging.kafka.api.OutgoingKafkaRecordMetadata;
  * reactive messaging API
  */
 @ApplicationScoped
-public class KafkaItemGenerator {
+public class KafkaItemGenerator extends SimulatorGenerator {
     Logger logger = Logger.getLogger(KafkaItemGenerator.class.getName());
 
     @Inject
     @Channel("items")
     public MutinyEmitter<Item> eventProducer;
 
-    @Inject
-    public StoreRepository storeRepository;
-
     public KafkaItemGenerator() {
     }
 
-    public List<Item> start(Integer numberOfRecords, boolean randomIt) {
-        List<Item> items;
-        if (randomIt)
-            items = storeRepository.buildRandomItems(numberOfRecords);
-        else
-            items = storeRepository.buildControlledItems();
-        logger.info(items.toString());
-        Multi.createFrom().items(items.stream()).subscribe().with(item -> {
-            sendToKafka(item);
-            logger.info(item.toString() + " sent");
-        }, failure -> logger.severe("Failed with " + failure.getMessage()));
-        return items;
-    }
-
-    private void sendToKafka(Item item) {
+    @Override
+    public void sendMessage(Item item) {
+        logger.info("Send message: " + item.toString());
         Message<Item> msg = Message.of(item).addMetadata(OutgoingKafkaRecordMetadata.<String>builder()
                 .withKey(item.storeName).build()).withAck(() -> {
                     // Called when the message is acked
@@ -74,10 +61,15 @@ public class KafkaItemGenerator {
                 })
                 .withNack(throwable -> {
                     // Called when the message is nacked
+                    logger.severe(throwable.getMessage());
                     logger.warning("Message nacked");
                     return CompletableFuture.completedFuture(null);
                 });
         eventProducer.send(msg);
     }
 
+    @Override
+    public boolean preProcessing() {
+        return true;
+    }
 }
