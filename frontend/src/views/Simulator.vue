@@ -66,35 +66,99 @@
       </v-row>
       <v-row align-content="center">
          <v-col class="mx-5" width="400px">
-           <v-btn color="primary" @click="start">
-                <v-icon>mdi-restart</v-icon>
-              </v-btn>
+         <v-row justify="center">
+             <v-dialog
+               v-model="dialog"
+               scrollable
+               max-width="800px"
+             >
+             <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                       color="primary"
+                       @click="start"
+                       v-bind="attrs"
+                       v-on="on">
+                     <v-icon>mdi-restart</v-icon>
+                  </v-btn>
+              </template>
+                <v-card>
+                                     <v-card-actions>
+                                               <v-btn
+                                                 color="blue darken-1"
+                                                 text
+                                                 @click="dialog = false"
+                                               >
+                                                 Close
+                                               </v-btn>
+
+                                      </v-card-actions>
+                    <v-row v-if="messages.length > 0">
+                            <Messages :messagesIn="messages"></Messages>
+                     </v-row>
+
+               </v-card>
+            </v-dialog>
+         </v-row>
          </v-col>
-         <v-col class="mx-5" width="400px"> 
+         <v-col class="mx-5" width="400px">
            <v-col> 
-            <v-btn color="secondary" @click="startRandom">
-              <v-icon>mdi-restart</v-icon>
-            </v-btn>
-           </v-col>
-           <v-col> 
-            <v-btn color="secondary" @click="stop">
-              <v-icon>mdi-stop</v-icon>
+
+            <v-btn
+                class="ui button big toggle"
+                color="primary"
+                :class="{active:isActive}"
+                @click="toggle"
+                >
+                  <v-icon v-if="isActive">mdi-restart</v-icon>
+                   <v-icon v-else>mdi-stop</v-icon>
             </v-btn>
            </v-col>
           </v-col>
-          <v-col class="mx-5" width="400px"> 
-            <v-btn color="primary" @click="startControlled">
-              <v-icon>mdi-run</v-icon>
-            </v-btn>
+          <v-col class="mx-5" width="400px">
+          <v-row justify="center">
+                       <v-dialog
+                         v-model="dialog"
+                         scrollable
+                         max-width="800px"
+                       >
+                       <template v-slot:activator="{ on, attrs }">
+                            <v-btn
+                                 color="primary"
+                                 @click="startControlled"
+                                 v-bind="attrs"
+                                 v-on="on">
+                               <v-icon>mdi-run</v-icon>
+                            </v-btn>
+                        </template>
+                          <v-card>
+                                <v-card-actions>
+                                         <v-btn
+                                            color="blue darken-1"
+                                            text
+                                            @click="dialog = false" >
+                                            Close
+                                         </v-btn>
+
+                                </v-card-actions>
+                              <v-row v-if="messages.length > 0">
+                                      <Messages :messagesIn="messages"></Messages>
+                               </v-row>
+
+                         </v-card>
+                      </v-dialog>
+                   </v-row>
+
+
           </v-col>
       </v-row>
-      <v-row v-if="messages.length > 0">
-        <Messages :messagesIn="messages"></Messages>
-      </v-row>
+
+
     </v-card>
   </v-container>
 </template>
 <script>
+// eslint-disable-next-line no-unused-vars
+/* eslint-disable */
 import axios from "axios";
 import Messages from "./Message.vue";
 
@@ -103,15 +167,28 @@ export default {
     Messages,
   },
   data: () => ({
+    dialogm1: '',
+    dialog: false,
+
     backend: "",
     backends: [],
     records: 1,
     messages: [],
+    isActive: true,
   }),
   created() {
     this.initialize();
   },
   methods: {
+    toggle() {
+      if (!this.isActive) {
+        this.isActive = true;
+        this.startRandom();
+      } else {
+        this.isActive = false;
+       this.stop();
+      }
+    },
     initialize() {
       axios
         .get("/api/stores/v1/backends")

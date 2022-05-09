@@ -20,9 +20,7 @@
     </v-row>
     <v-row> 
        <v-col class="mx-5" width="400px">
-           <v-btn color="primary" @click="close">
-                <v-icon>mdi-close</v-icon>
-              </v-btn>
+
          </v-col>
     </v-row>
   </v-row>
