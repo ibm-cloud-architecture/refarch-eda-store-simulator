@@ -16,13 +16,15 @@ services:
         MQ_QMGR_NAME: QM1
         MQ_APP_PASSWORD: passw0rd
         MQ_ENABLE_METRICS: "true"
-  simulator:
-    image: ibmcase/eda-store-simulator
+  storeapp:
+    image: quay.io/ibmcase/eda-store-simulator
     depends_on:
       - ibmmq
     environment:
       APP_TARGET_MESSAGING: IBMMQ
       MQ_HOST: ibmmq
+      KAFKA_CERT_PWD: ""
+      USER_CERT_PWD: ""
     hostname: storeapp
     ports:
       - "8080:8080"

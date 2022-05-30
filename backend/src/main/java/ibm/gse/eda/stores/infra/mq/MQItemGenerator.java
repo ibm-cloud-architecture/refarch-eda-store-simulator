@@ -78,7 +78,6 @@ public class MQItemGenerator extends SimulatorGenerator {
   private JmsConnectionFactory cf = null;
   protected Jsonb jsonb = null;
 
-
   private static void processJMSException(JMSException jmsex) {
     logger.info(jmsex.getMessage());
     Throwable innerException = jmsex.getLinkedException();
@@ -94,29 +93,28 @@ public class MQItemGenerator extends SimulatorGenerator {
   }
 
   @Override
-  public void sendMessages( List<Item> items ){
+  public void sendMessages(List<Item> items) {
     try {
       jmsContext = buildJMSConnectionSession();
       producer = jmsContext.createProducer();
       Multi.createFrom().items(items.stream()).subscribe().with(item -> {
-          sendMessage(item);
+        sendMessage(item);
       }, failure -> logger.error("Failed with " + failure.getMessage()));
     } catch (Exception e) {
       if (e != null) {
         if (e instanceof JMSException) {
-            processJMSException((JMSException) e);
+          processJMSException((JMSException) e);
         } else {
-            logger.error(e.getMessage());
-            logger.error(e.getCause());
+          logger.error(e.getMessage());
+          logger.error(e.getCause());
         }
       }
-  } finally {
+    } finally {
       if (jmsContext != null)
-            jmsContext.close();
-  }
+        jmsContext.close();
+    }
 
   }
-
 
   @Override
   public void sendMessage(Item item) {
@@ -135,11 +133,7 @@ public class MQItemGenerator extends SimulatorGenerator {
           logger.error(e.getCause());
         }
       }
-    } finally {
-      if (jmsContext != null)
-        jmsContext.close();
     }
-
   }
 
   private String validateCcdtFile() {
