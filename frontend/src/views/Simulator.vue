@@ -109,8 +109,8 @@
                 :class="{active:isActive}"
                 @click="toggle"
                 >
-                  <v-icon v-if="isActive">mdi-restart</v-icon>
-                   <v-icon v-else>mdi-stop</v-icon>
+                  <v-icon v-if="isActive">mdi-stop</v-icon>
+                   <v-icon v-else>mdi-restart</v-icon>
             </v-btn>
            </v-col>
           </v-col>
@@ -174,7 +174,7 @@ export default {
     backends: [],
     records: 1,
     messages: [],
-    isActive: true,
+    isActive: false,
   }),
   created() {
     this.initialize();
@@ -210,12 +210,15 @@ export default {
         .then((resp) => (this.messages = resp.data));
     },
     startRandom() {
+      console.log(" start random with " + this.records + " records to " + this.backend);
       let control = { records: this.records, backend: this.backend, type: "random" };
       axios
         .post("/api/stores/v1/start/", control)
         .then((resp) => (this.messages = resp.data));
     },
     stop() {
+      console.log(" stop random ");
+     
       let control = { records: this.records, backend: this.backend, type: "stop" };
       axios
         .post("/api/stores/v1/stop/", control)

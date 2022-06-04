@@ -19,6 +19,7 @@ public class StoreRepository  {
     static Logger logger = Logger.getLogger("StoreRepository");
     
     static HashMap<String,Store> stores =new HashMap<String,Store>();
+    public long baseIndex = 0;
 
     public StoreRepository(){
         Store s = new Store("Store_1","Santa Clara", "CA", "95051");
@@ -49,7 +50,8 @@ public class StoreRepository  {
     public List<Item> buildRandomItems(int nbItem) {
         List<Item> items = new ArrayList<Item>();
         for (int i = 0; i < nbItem; i++) {
-            items.add(Item.buildRandomItem(i,getStoreNames()));
+            items.add(Item.buildRandomItem(baseIndex,getStoreNames()));
+            baseIndex++;
             logger.log(Level.FINE,items.toString());
         }
         return items;

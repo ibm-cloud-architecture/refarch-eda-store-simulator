@@ -14,7 +14,7 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 public class Item {
         public static String RESTOCK = "RESTOCK";
         public static String SALE = "SALE";
-        public int id;
+        public long id;
         public String storeName;
         public String sku;
         public int quantity;
@@ -31,7 +31,7 @@ public class Item {
         public Item() {
         }
 
-        public Item(int id,String store, String sku, String type, int quantity, double price) {
+        public Item(long id,String store, String sku, String type, int quantity, double price) {
                 this.id = id;
                 this.storeName = store;
                 this.sku = sku;
@@ -63,7 +63,7 @@ public class Item {
                 return jsonb.toJson(this);
         }
 
-        public static Item buildRandomItem(int i,String[] stores) {
+        public static Item buildRandomItem(long i,String[] stores) {
                 Item item = new Item();
                 item.id= i;
                 item.storeName = stores[random.nextInt(stores.length)];

@@ -2,19 +2,21 @@ package ibm.gse.eda.stores.infra;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import ibm.gse.eda.stores.domain.Item;
-import io.smallrye.mutiny.Multi;
 
 public class SimulatorRunnable implements Runnable {
-
+    Logger logger = Logger.getLogger(SimulatorRunnable.class.getName());
     SimulatorGenerator generator;
     boolean running = true;
     StoreRepository storeRepository;
     int recordsToSend =0;
     List<Item> items = new ArrayList<Item>();
 
-    public SimulatorRunnable(SimulatorGenerator gen,StoreRepository storeRepository, int records) {
+    public SimulatorRunnable(SimulatorGenerator gen,
+                        StoreRepository storeRepository, 
+                        int records) {
         this.generator = gen;
         this.storeRepository = storeRepository;
         this.recordsToSend = records;
@@ -33,7 +35,8 @@ public class SimulatorRunnable implements Runnable {
                     running=false;
                 }
             }
-        }    
+        }
+        logger.info("Terminating runnable loop");    
     }
     
     public void stop(){

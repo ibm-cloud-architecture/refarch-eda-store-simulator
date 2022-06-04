@@ -60,8 +60,10 @@ public abstract class SimulatorGenerator {
     }
 
     public void stop(){
-        runIt.stop();
-        executor.shutdown();
+        if (runIt != null) {
+            runIt.stop();
+            executor.shutdown();
+        }
     }
 
     public void sendMessages( List<Item> items ){
