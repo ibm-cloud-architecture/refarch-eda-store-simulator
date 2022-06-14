@@ -15,7 +15,6 @@
 */
 package ibm.gse.eda.stores.infra.kafka;
 
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 
@@ -27,9 +26,6 @@ import org.eclipse.microprofile.reactive.messaging.Message;
 
 import ibm.gse.eda.stores.domain.Item;
 import ibm.gse.eda.stores.infra.SimulatorGenerator;
-import ibm.gse.eda.stores.infra.StoreRepository;
-import ibm.gse.eda.stores.infra.api.dto.SimulationControl;
-import io.smallrye.mutiny.Multi;
 import io.smallrye.reactive.messaging.MutinyEmitter;
 import io.smallrye.reactive.messaging.kafka.api.OutgoingKafkaRecordMetadata;
 
