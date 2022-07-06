@@ -5,7 +5,7 @@
   <parent>
     <groupId>ibm.gse.eda</groupId>
     <artifactId>store-simulator</artifactId>
-    <version>0.0.13</version>
+    <version>0.0.15</version>
   </parent>
   <artifactId>store-simulator-backend</artifactId>
   <properties>
@@ -15,10 +15,10 @@
     <maven.compiler.parameters>true</maven.compiler.parameters>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
+    <surefire-plugin.version>3.0.0-M7</surefire-plugin.version>
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
-    <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
-    <quarkus.platform.version>2.9.2.Final</quarkus.platform.version>
+    <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
+    <quarkus.platform.version>2.10.1.Final</quarkus.platform.version>
    
     <version.resources-plugin>3.2.0</version.resources-plugin>
   </properties>
@@ -40,15 +40,15 @@
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-resteasy</artifactId>
+      <artifactId>quarkus-resteasy-reactive</artifactId>
     </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-resteasy-reactive-jsonb</artifactId>
+  </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-rest-client</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-resteasy-jsonb</artifactId>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
@@ -80,15 +80,11 @@
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-resteasy-mutiny</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-kubernetes-config</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.quarkus</groupId>
       <artifactId>quarkus-smallrye-reactive-messaging-kafka</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-apicurio-registry-avro</artifactId>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
@@ -139,6 +135,7 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>${compiler-plugin.version}</version>
         <configuration>
+          <forceJavacCompilerUse>true</forceJavacCompilerUse>
           <compilerArgs>
             <arg>-parameters</arg>
           </compilerArgs>
