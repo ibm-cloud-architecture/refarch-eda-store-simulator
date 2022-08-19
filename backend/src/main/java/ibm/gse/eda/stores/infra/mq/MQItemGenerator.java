@@ -14,16 +14,15 @@ import javax.jms.TextMessage;
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.jboss.logging.Logger;
+
 import com.ibm.msg.client.jms.JmsConnectionFactory;
 import com.ibm.msg.client.jms.JmsFactoryFactory;
 import com.ibm.msg.client.wmq.WMQConstants;
 
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.jboss.logging.Logger;
-
 import ibm.gse.eda.stores.domain.Item;
 import ibm.gse.eda.stores.infra.SimulatorGenerator;
-import ibm.gse.eda.stores.infra.StoreRepository;
 import io.smallrye.mutiny.Multi;
 
 @ApplicationScoped
@@ -72,7 +71,7 @@ public class MQItemGenerator extends SimulatorGenerator {
 
   private Jsonb parser = JsonbBuilder.create();
 
-  protected JMSProducer producer = null;
+  private JMSProducer producer = null;
   private JMSContext jmsContext = null;
   private Destination destination = null;
   private JmsConnectionFactory cf = null;
