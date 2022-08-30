@@ -1,6 +1,6 @@
 # Store sale event producer simulator
 
-Updated 4/20/2022
+Updated 8/30/2022
 
 The store sales simulator application aims to demonstrate an end-to-end real-time inventory solution based on event-driven architecture
 and data streaming capabilities. It supports the following features:
@@ -38,6 +38,7 @@ Updates:
 * 02/28/2022: Add JMScorrelationID as store name to send to MQ so kafka connector can use if for record key
 * 03/29/2022: Move Kafka producer to use reactive messaging.
 * 04/20/2022: Add close button on messages window.
+* 08/30/2022: Add better home page layout
 
 ## Build the application locally
 
